@@ -1,0 +1,46 @@
+{
+  "name": "exotel-call-ribbon-widget",
+  "version": "1.0.0",
+  "description": "Embeddable call control widget for CRM integration",
+  "main": "dist/ribbon.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "keywords": [
+    "exotel",
+    "call-control",
+    "widget",
+    "crm",
+    "telephony"
+  ],
+  "author": "Your Company",
+  "license": "MIT",
+  "dependencies": {
+    "exotel-ip-calling-crm-websdk": "github:ExoAbhishek/exotel-ip-calling-crm-websdk",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "5.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-react": "^7.22.0",
+    "babel-loader": "^9.1.0",
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

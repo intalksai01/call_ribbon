@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exotel Call Ribbon - Integration Examples</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+    .example {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .example h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    .customer-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .customer-card {
+      background: #f9fafb;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .customer-card:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .customer-card.selected {
+      border-color: #667eea;
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+    }
+    .customer-name {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+    .customer-info {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background: #5568d3;
+    }
+    .code {
+      background: #1f2937;
+      color: #10b981;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+      margin: 15px 0;
+    }
+    .status {
+      background: #f0f9ff;
+      border: 1px solid #bfdbfe;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+    .log {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      padding: 15px;
+      border-radius: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .log-entry {
+      padding: 5px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>🎯 Exotel Call Control Ribbon</h1>
+    <p>Integration Examples for Different CRM Types</p>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- Example 1: Collections CRM -->
+  <!-- ============================================ -->
+  <div class="example">
+    <h2>📊 Example 1: Collections CRM</h2>
+    <p>Automatically dial customers with outstanding payments</p>
+
+    <div class="status" id="status-collections">
+      Status: Not initialized
+    </div>
+
+    <button onclick="initCollectionsCRM()">Initialize Collections CRM</button>
+
+    <div class="customer-list" id="collections-customers"></div>
+
+    <h3>Call Log:</h3>
+    <div class="log" id="log-collections"></div>
+
+    <h3>Implementation:</h3>
+    <div class="code">// Collections CRM Integration
+&lt;script src="https://cdn.yourcompany.com/ribbon/v1/ribbon.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  // Initialize with Collections CRM API key
+  ExotelCallRibbon.init({
+    apiKey: 'collections-crm-api-key-123',
+    position: 'bottom',
+    onCallEvent: function(event, data) {
+      // Log to your collections database
+      logToCollectionsDB(event, data);
+    },
+    onReady: function() {
+      console.log('Ribbon ready for collections');
+    }
+  });
+
+  // When agent selects a customer
+  function selectCustomer(customer) {
+    ExotelCallRibbon.setCustomer({
+      phoneNumber: customer.phone,
+      name: customer.name,
+      customerId: customer.id
+    });
+  }
+&lt;/script&gt;</div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- Example 2: Marketing Leads CRM -->
+  <!-- ============================================ -->
+  <div class="example">
+    <h2>📞 Example 2: Marketing Leads CRM</h2>
+    <p>Follow up with potential customers</p>
+
+    <div class="status" id="status-marketing">
+      Status: Not initialized
+    </div>
+
+    <button onclick="initMarketingCRM()">Initialize Marketing CRM</button>
+
+    <div class="customer-list" id="marketing-leads"></div>
+
+    <h3>Call Log:</h3>
+    <div class="log" id="log-marketing"></div>
+
+    <h3>Implementation:</h3>
+    <div class="code">// Marketing Leads CRM Integration
+ExotelCallRibbon.init({
+  apiKey: 'marketing-leads-api-key-456',
+  position: 'floating',
+  onCallEvent: function(event, data) {
+    // Update lead status
+    if (event === 'connected') {
+      updateLeadStatus(data.customerData.customerId, 'contacted');
+    }
+    if (event === 'callEnded') {
+      showFeedbackForm(data.customerData.customerId);
+    }
+  }
+});</div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- Example 3: Support CRM -->
+  <!-- ============================================ -->
+  <div class="example">
+    <h2>🎧 Example 3: Customer Support CRM</h2>
+    <p>Handle support tickets with integrated calling</p>
+
+    <div class="status" id="status-support">
+      Status: Not initialized
+    </div>
+
+    <button onclick="initSupportCRM()">Initialize Support CRM</button>
+    <button onclick="changePosition()">Change Position</button>
+    <button onclick="toggleMinimize()">Toggle Minimize</button>
+
+    <div class="customer-list" id="support-tickets"></div>
+
+    <h3>Call Log:</h3>
+    <div class="log" id="log-support"></div>
+
+    <h3>Implementation:</h3>
+    <div class="code">// Support CRM Integration
+ExotelCallRibbon.init({
+  apiKey: 'demo-api-key-789',
+  position: 'bottom',
+  onCallEvent: function(event, data) {
+    // Log to ticket
+    addCallNoteToTicket(data.customerData.customerId, event);
+    
+    // Auto-create ticket for incoming calls
+    if (event === 'incoming') {
+      createTicketFromCall(data);
+    }
+  }
+});
+
+// Additional controls
+ExotelCallRibbon.setPosition('top'); // Change position
+ExotelCallRibbon.setMinimized(true); // Minimize
+ExotelCallRibbon.setVisible(false);  // Hide completely</div>
+  </div>
+
+  <!-- Include the actual ribbon script -->
+  <!-- In production, this would be your CDN URL -->
+  <!-- <script src="https://cdn.yourcompany.com/ribbon/v1/ribbon.js"></script> -->
+  
+  <!-- For local development, we'll simulate the API -->
+  <script>
+    // ============================================
+    // Sample Data
+    // ============================================
+
+    const collectionsCustomers = [
+      { id: 'C001', name: 'John Doe', phone: '+919876543210', amount: '$5,000', daysOverdue: 15 },
+      { id: 'C002', name: 'Jane Smith', phone: '+918765432109', amount: '$3,500', daysOverdue: 30 },
+      { id: 'C003', name: 'Bob Johnson', phone: '+917654321098', amount: '$7,200', daysOverdue: 45 }
+    ];
+
+    const marketingLeads = [
+      { id: 'L001', name: 'Alice Williams', phone: '+919988776655', source: 'Website', interest: 'Premium Plan' },
+      { id: 'L002', name: 'Charlie Brown', phone: '+918877665544', source: 'Facebook', interest: 'Basic Plan' },
+      { id: 'L003', name: 'Diana Prince', phone: '+917766554433', source: 'LinkedIn', interest: 'Enterprise' }
+    ];
+
+    const supportTickets = [
+      { id: 'T001', name: 'Eve Adams', phone: '+919998887777', issue: 'Login Problem', priority: 'High' },
+      { id: 'T002', name: 'Frank Castle', phone: '+918887776666', issue: 'Billing Question', priority: 'Medium' },
+      { id: 'T003', name: 'Grace Hopper', phone: '+917776665555', issue: 'Feature Request', priority: 'Low' }
+    ];
+
+    let currentCRM = null;
+    let selectedCustomer = null;
+
+    // ============================================
+    // Collections CRM Functions
+    // ============================================
+
+    function initCollectionsCRM() {
+      currentCRM = 'collections';
+      updateStatus('collections', 'Initializing...');
+
+      // In production, this would call ExotelCallRibbon.init()
+      // For demo, we'll simulate it
+      setTimeout(() => {
+        updateStatus('collections', '✅ Ribbon initialized - Ready to make calls');
+        renderCustomers('collections-customers', collectionsCustomers, 'collections');
+      }, 1000);
+
+      logEvent('collections', 'Ribbon initialized for Collections CRM');
+    }
+
+    // ============================================
+    // Marketing CRM Functions
+    // ============================================
+
+    function initMarketingCRM() {
+      currentCRM = 'marketing';
+      updateStatus('marketing', 'Initializing...');
+
+      setTimeout(() => {
+        updateStatus('marketing', '✅ Ribbon initialized - Ready to contact leads');
+        renderCustomers('marketing-leads', marketingLeads, 'marketing');
+      }, 1000);
+
+      logEvent('marketing', 'Ribbon initialized for Marketing CRM');
+    }
+
+    // ============================================
+    // Support CRM Functions
+    // ============================================
+
+    function initSupportCRM() {
+      currentCRM = 'support';
+      updateStatus('support', 'Initializing...');
+
+      setTimeout(() => {
+        updateStatus('support', '✅ Ribbon initialized - Ready to handle tickets');
+        renderCustomers('support-tickets', supportTickets, 'support');
+      }, 1000);
+
+      logEvent('support', 'Ribbon initialized for Support CRM');
+    }
+
+    function changePosition() {
+      const positions = ['top', 'bottom', 'floating'];
+      const current = Math.floor(Math.random() * positions.length);
+      logEvent('support', `Position changed to: ${positions[current]}`);
+      alert(`In production: ExotelCallRibbon.setPosition('${positions[current]}')`);
+    }
+
+    function toggleMinimize() {
+      logEvent('support', 'Ribbon minimized/expanded');
+      alert('In production: ExotelCallRibbon.setMinimized(true/false)');
+    }
+
+    // ============================================
+    // Helper Functions
+    // ============================================
+
+    function renderCustomers(containerId, customers, crm) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = customers.map(customer => `
+        <div class="customer-card" onclick="selectCustomer('${crm}', '${customer.id}')">
+          <div class="customer-name">${customer.name}</div>
+          <div class="customer-info">📞 ${customer.phone}</div>
+          <div class="customer-info">
+            ${customer.amount ? `💰 ${customer.amount} (${customer.daysOverdue} days)` : ''}
+            ${customer.source ? `🔗 ${customer.source} - ${customer.interest}` : ''}
+            ${customer.issue ? `📋 ${customer.issue} (${customer.priority})` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectCustomer(crm, customerId) {
+      const customers = {
+        'collections': collectionsCustomers,
+        'marketing': marketingLeads,
+        'support': supportTickets
+      };
+
+      const customer = customers[crm].find(c => c.id === customerId);
+      selectedCustomer = customer;
+
+      // Highlight selected
+      document.querySelectorAll('.customer-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      event.target.closest('.customer-card').classList.add('selected');
+
+      // In production: ExotelCallRibbon.setCustomer(customer)
+      logEvent(crm, `Customer selected: ${customer.name} (${customer.phone})`);
+      
+      // Simulate call events
+      simulateCall(crm, customer);
+    }
+
+    function simulateCall(crm, customer) {
+      setTimeout(() => {
+        logEvent(crm, `📞 Dialing ${customer.name}...`);
+      }, 500);
+
+      setTimeout(() => {
+        logEvent(crm, `✅ Call connected to ${customer.name}`);
+      }, 2000);
+
+      setTimeout(() => {
+        logEvent(crm, `⏸️  Call ended - Duration: 2:45`);
+      }, 5000);
+    }
+
+    function updateStatus(crm, message) {
+      document.getElementById(`status-${crm}`).textContent = `Status: ${message}`;
+    }
+
+    function logEvent(crm, message) {
+      const logContainer = document.getElementById(`log-${crm}`);
+      const timestamp = new Date().toLocaleTimeString();
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.textContent = `[${timestamp}] ${message}`;
+      logContainer.insertBefore(entry, logContainer.firstChild);
+    }
+
+    // ============================================
+    // Production API Example
+    // ============================================
+
+    function productionExample() {
+      // This is what your clients would actually use:
+      
+      ExotelCallRibbon.init({
+        apiKey: 'your-api-key-from-us',
+        position: 'bottom', // or 'top', 'floating'
+        onCallEvent: function(event, data) {
+          // Called for every call event
+          console.log('Call event:', event);
+          console.log('Call data:', data);
+          
+          // Integrate with your CRM
+          switch(event) {
+            case 'incoming':
+              // Show incoming call notification
+              break;
+            case 'connected':
+              // Start timer, update UI
+              break;
+            case 'callEnded':
+              // Save call record, show summary
+              break;
+          }
+        },
+        onReady: function() {
+          console.log('Ribbon is ready!');
+        }
+      });
+
+      // When customer is selected
+      ExotelCallRibbon.setCustomer({
+        phoneNumber: '+919876543210',
+        name: 'Customer Name',
+        customerId: 'your-crm-id'
+      });
+    }
+  </script>
+
+  <div class="example">
+    <h2>📚 Quick Reference</h2>
+    <h3>Available Methods:</h3>
+    <div class="code">// Initialize
+ExotelCallRibbon.init({ apiKey, position, onCallEvent, onReady });
+
+// Set customer
+ExotelCallRibbon.setCustomer({ phoneNumber, name, customerId });
+
+// Control position
+ExotelCallRibbon.setPosition('top' | 'bottom' | 'floating');
+
+// Show/Hide
+ExotelCallRibbon.setVisible(true | false);
+
+// Minimize/Expand
+ExotelCallRibbon.setMinimized(true | false);
+
+// Destroy
+ExotelCallRibbon.destroy();</div>
+  </div>
+
+</body>
+</html>
