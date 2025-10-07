@@ -207,6 +207,40 @@
             </div>
         </div>
         
+        <div class="success-box">
+            <h3>✅ Widget Demo Page</h3>
+            <p>This page demonstrates the IntalksAI Call Control Ribbon widget.</p>
+            <p><strong>Widget URL:</strong> <a href="http://intalksai-call-ribbon-widget-844605843483.s3-website-us-east-1.amazonaws.com">http://intalksai-call-ribbon-widget-844605843483.s3-website-us-east-1.amazonaws.com</a></p>
+            <p><strong>API URL:</strong> <a href="http://production.eba-tpbtmere.us-east-1.elasticbeanstalk.com">http://production.eba-tpbtmere.us-east-1.elasticbeanstalk.com</a></p>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 How to Test:</h3>
+            <ol>
+                <li><strong>Wait for initialization</strong> - The ribbon will load automatically</li>
+                <li><strong>Click on a customer card</strong> above to load their phone number</li>
+                <li><strong>Look at the bottom of the page</strong> - You'll see the IntalksAI Call Ribbon</li>
+                <li><strong>Click the 📞 Dial button</strong> to test the call flow</li>
+                <li><strong>Test all controls</strong> - Mute, Hold, DTMF keypad</li>
+            </ol>
+        </div>
+        
+        <div class="instructions">
+            <h3>🎨 Features to Test:</h3>
+            <ul>
+                <li><strong>📞 Dial:</strong> Click to initiate call (or press Ctrl+D)</li>
+                <li><strong>🔇 Mute:</strong> Toggle microphone (Ctrl+M)</li>
+                <li><strong>⏸️ Hold:</strong> Put call on hold (Ctrl+H)</li>
+                <li><strong>🔢 DTMF:</strong> Touch-tone keypad (0-9, *, #)</li>
+                <li><strong>▼ Minimize:</strong> Collapse ribbon (Space bar)</li>
+                <li><strong>⏱️ Timer:</strong> Real-time call duration</li>
+                <li><strong>🔔 Notifications:</strong> Status updates</li>
+                <li><strong>⌨️ Keyboard Shortcuts:</strong> Full keyboard support</li>
+            </ul>
+        </div>
+        
+        <h3>📊 Event Log:</h3>
+        <div id="event-log" class="code">Waiting for events...</div>
         
     </div>
 
@@ -214,19 +248,36 @@
     <link rel="stylesheet" href="/static/css/main.ae417a60.css?v=1759690232">
     <script src="/static/js/main.384b2cab.js?v=1759690232"></script>
     <script>
+        // Event log
+        function logEvent(message) {
+            const log = document.getElementById('event-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = `[${timestamp}] ${message}`;
+            
+            if (log.textContent === 'Waiting for events...') {
+                log.textContent = entry;
+            } else {
+                log.textContent = entry + '\n' + log.textContent;
+            }
+        }
         
         // Initialize the ribbon
         setTimeout(() => {
             try {
+                logEvent('🚀 Initializing IntalksAI Call Ribbon...');
+                
                 if (typeof ExotelCallRibbon === 'undefined') {
                     throw new Error('ExotelCallRibbon not loaded. Widget files may not be accessible.');
                 }
+                
+                logEvent('✅ Widget JavaScript loaded successfully');
                 
                 ExotelCallRibbon.init({
                     apiKey: 'demo-api-key-789',
                     apiUrl: 'http://production.eba-tpbtmere.us-east-1.elasticbeanstalk.com',
                     position: 'bottom',
                     onCallEvent: function(event, data) {
+                        logEvent(`📞 Call Event: ${event}`);
                         console.log('Call Event:', event, data);
                         
                         // Update status based on event
@@ -239,12 +290,16 @@
                         }
                     },
                     onReady: function() {
+                        logEvent('✅ Ribbon initialized and ready!');
+                        logEvent('🎯 Connected to API: production.eba-tpbtmere.us-east-1.elasticbeanstalk.com');
                         document.getElementById('status').className = 'status success';
                         document.getElementById('status-text').textContent = '✅ Ribbon loaded successfully! Click a customer to test.';
                     }
                 });
+                
+                logEvent('⏳ Connecting to API server...');
             } catch (error) {
-                console.error('❌ Error: ' + error.message);
+                logEvent('❌ Error: ' + error.message);
                 document.getElementById('status').className = 'status error';
                 document.getElementById('status-text').textContent = '❌ Failed to load ribbon: ' + error.message;
                 console.error('Ribbon initialization error:', error);
@@ -253,6 +308,8 @@
         
         // Select customer function
         function selectCustomer(name, phone, customerId) {
+            logEvent(`👤 Selected: ${name} (${phone})`);
+            
             // Highlight selected card
             document.querySelectorAll('.customer-card').forEach(card => {
                 card.classList.remove('selected');
@@ -270,14 +327,19 @@
                     name: name,
                     customerId: customerId
                 });
+                logEvent(`✅ Customer loaded: ${name}`);
                 
                 // Update status
                 document.getElementById('status').className = 'status';
                 document.getElementById('status-text').textContent = `Ready to call ${name}`;
             } catch (error) {
-                console.error(`❌ Error: ${error.message}`);
+                logEvent(`❌ Error: ${error.message}`);
             }
         }
+        
+        // Log page load
+        logEvent('📄 Demo page loaded');
+        logEvent('📦 Loading widget...');
     </script>
   </body>
 </html>

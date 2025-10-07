@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntalksAI Call Ribbon - CRM Integration Demos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #334155;
+        }
+
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+        }
+
+        .demo-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .demo-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-card-header {
+            padding: 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .demo-card-header h3 {
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .demo-card-header p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .demo-card-content {
+            padding: 20px;
+            min-height: 400px;
+            position: relative;
+        }
+
+        /* CRM Layout Styles */
+        .crm-layout {
+            display: flex;
+            height: 100%;
+            gap: 20px;
+        }
+
+        .crm-sidebar {
+            width: 250px;
+            background: #1e293b;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .crm-sidebar h4 {
+            margin-bottom: 15px;
+            color: #f1f5f9;
+        }
+
+        .crm-sidebar ul {
+            list-style: none;
+        }
+
+        .crm-sidebar li {
+            padding: 8px 12px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .crm-sidebar li:hover {
+            background: #334155;
+        }
+
+        .crm-sidebar li.active {
+            background: #3b82f6;
+        }
+
+        .crm-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .crm-header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .crm-header h2 {
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .crm-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            flex: 1;
+        }
+
+        /* Customer List Styles */
+        .customer-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .customer-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .customer-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .customer-card.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .customer-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .customer-details h4 {
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .customer-details p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .customer-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-lead {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-vip {
+            background: #fce7f3;
+            color: #be185d;
+        }
+
+        /* Call Ribbon Integration */
+        .call-ribbon-demo {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            padding: 16px 20px;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .ribbon-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .ribbon-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .ribbon-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .call-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .call-info h4 {
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .call-info p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .call-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #dcfce7;
+            color: #166534;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .call-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .control-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-1px);
+        }
+
+        .control-btn.active {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .control-btn.hangup {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .call-timer {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Demo Variants */
+        .demo-salesforce .crm-sidebar {
+            background: #00a1e0;
+        }
+
+        .demo-hubspot .crm-sidebar {
+            background: #ff7a59;
+        }
+
+        .demo-pipedrive .crm-sidebar {
+            background: #f16725;
+        }
+
+        .demo-zoho .crm-sidebar {
+            background: #0066cc;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .crm-layout {
+                flex-direction: column;
+            }
+            
+            .crm-sidebar {
+                width: 100%;
+            }
+            
+            .ribbon-content {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+
+        /* Floating Ribbon Demo */
+        .floating-ribbon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .floating-ribbon-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 16px;
+            font-weight: 600;
+        }
+
+        .floating-ribbon-content {
+            padding: 16px;
+        }
+
+        .floating-ribbon .call-info {
+            margin-bottom: 12px;
+        }
+
+        .floating-ribbon .call-controls {
+            justify-content: center;
+        }
+
+        /* Integration Instructions */
+        .integration-instructions {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        .integration-instructions h3 {
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+
+        .integration-steps {
+            display: grid;
+            gap: 20px;
+        }
+
+        .integration-step {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .step-content p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🚀 IntalksAI Call Control Ribbon</h1>
+            <p>CRM Integration Design Options & Demo Scenarios</p>
+        </div>
+
+        <div class="demo-grid">
+            <!-- Demo 1: Salesforce Integration -->
+            <div class="demo-card">
+                <div class="demo-card-header">
+                    <h3>🏢 Salesforce CRM Integration</h3>
+                    <p>Enterprise-grade customer relationship management with embedded call controls</p>
+                </div>
+                <div class="demo-card-content">
+                    <div class="crm-layout demo-salesforce">
+                        <div class="crm-sidebar">
+                            <h4>Salesforce</h4>
+                            <ul>
+                                <li class="active">Leads</li>
+                                <li>Opportunities</li>
+                                <li>Accounts</li>
+                                <li>Contacts</li>
+                                <li>Cases</li>
+                                <li>Reports</li>
+                            </ul>
+                        </div>
+                        <div class="crm-main">
+                            <div class="crm-header">
+                                <h2>Lead Management</h2>
+                                <p>Track and manage your sales pipeline</p>
+                            </div>
+                            <div class="crm-content">
+                                <div class="customer-list">
+                                    <div class="customer-card selected">
+                                        <div class="customer-info">
+                                            <div class="customer-details">
+                                                <h4>Sarah Johnson</h4>
+                                                <p>Chief Marketing Officer • TechCorp Inc.</p>
+                                            </div>
+                                            <div class="customer-status status-lead">Hot Lead</div>
+                                        </div>
+                                    </div>
+                                    <div class="customer-card">
+                                        <div class="customer-info">
+                                            <div class="customer-details">
+                                                <h4>Mike Chen</h4>
+                                                <p>VP of Sales • GrowthStart LLC</p>
+                                            </div>
+                                            <div class="customer-status status-active">Active</div>
+                                        </div>
+                                    </div>
+                                    <div class="customer-card">
+                                        <div class="customer-info">
+                                            <div class="customer-details">
+                                                <h4>Emily Rodriguez</h4>
+                                                <p>CEO • InnovateNow Corp</p>
+                                            </div>
+                                            <div class="customer-status status-vip">VIP Client</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo 2: HubSpot Integration -->
+            <div class="demo-card">
+                <div class="demo-card-header">
+                    <h3>🎯 HubSpot CRM Integration</h3>
+                    <p>Inbound marketing platform with seamless call management</p>
+                </div>
+                <div class="demo-card-content">
+                    <div class="crm-layout demo-hubspot">
+                        <div class="crm-sidebar">
+                            <h4>HubSpot</h4>
+                            <ul>
+                                <li>Contacts</li>
+                                <li class="active">Companies</li>
+                                <li>Deals</li>
+                                <li>Tasks</li>
+                                <li>Marketing</li>
+                                <li>Analytics</li>
+                            </ul>
+                        </div>
+                        <div class="crm-main">
+                            <div class="crm-header">
+                                <h2>Company Directory</h2>
+                                <p>Manage your business relationships</p>
+                            </div>
+                            <div class="crm-content">
+                                <div class="customer-list">
+                                    <div class="customer-card selected">
+                                        <div class="customer-info">
+                                            <div class="customer-details">
+                                                <h4>David Kim</h4>
+                                                <p>Founder • CloudTech Solutions</p>
+                                            </div>
+                                            <div class="customer-status status-active">Active</div>
+                                        </div>
+                                    </div>
+                                    <div class="customer-card">
+                                        <div class="customer-info">
+                                            <div class="customer-details">
+                                                <h4>Lisa Wang</h4>
+                                                <p>CTO • DataFlow Systems</p>
+                                            </div>
+                                            <div class="customer-status status-lead">Qualified</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo 3: Pipedrive Integration -->
+            <div class="demo-card">
+                <div class="demo-card-header">
+                    <h3>📈 Pipedrive CRM Integration</h3>
+                    <p>Visual sales pipeline with integrated calling capabilities</p>
+                </div>
+                <div class="demo-card-content">
+                    <div class="crm-layout demo-pipedrive">
+                        <div class="crm-sidebar">
+                            <h4>Pipedrive</h4>
+                            <ul>
+                                <li>Pipeline</li>
+                                <li>Activities</li>
+                                <li>Products</li>
+                                <li class="active">People</li>
+                                <li>Statistics</li>
+                                <li>Settings</li>
+                            </ul>
+                        </div>
+                        <div class="crm-main">
+                            <div class="crm-header">
+                                <h2>People & Contacts</h2>
+                                <p>Your sales contacts and prospects</p>
+                            </div>
+                            <div class="crm-content">
+                                <div class="customer-list">
+                                    <div class="customer-card selected">
+                                        <div class="customer-info">
+                                            <div class="customer-details">
+                                                <h4>Alex Thompson</h4>
+                                                <p>Sales Director • Enterprise Solutions</p>
+                                            </div>
+                                            <div class="customer-status status-vip">VIP</div>
+                                        </div>
+                                    </div>
+                                    <div class="customer-card">
+                                        <div class="customer-info">
+                                            <div class="customer-details">
+                                                <h4>Rachel Green</h4>
+                                                <p>Marketing Manager • StartupCo</p>
+                                            </div>
+                                            <div class="customer-status status-lead">Prospect</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo 4: Zoho CRM Integration -->
+            <div class="demo-card">
+                <div class="demo-card-header">
+                    <h3>🌐 Zoho CRM Integration</h3>
+                    <p>Comprehensive business suite with advanced call tracking</p>
+                </div>
+                <div class="demo-card-content">
+                    <div class="crm-layout demo-zoho">
+                        <div class="crm-sidebar">
+                            <h4>Zoho CRM</h4>
+                            <ul>
+                                <li>Dashboard</li>
+                                <li>Leads</li>
+                                <li class="active">Contacts</li>
+                                <li>Accounts</li>
+                                <li>Deals</li>
+                                <li>Campaigns</li>
+                            </ul>
+                        </div>
+                        <div class="crm-main">
+                            <div class="crm-header">
+                                <h2>Contact Management</h2>
+                                <p>Centralized contact database</p>
+                            </div>
+                            <div class="crm-content">
+                                <div class="customer-list">
+                                    <div class="customer-card selected">
+                                        <div class="customer-info">
+                                            <div class="customer-details">
+                                                <h4>James Wilson</h4>
+                                                <p>Operations Manager • GlobalTech</p>
+                                            </div>
+                                            <div class="customer-status status-active">Active</div>
+                                        </div>
+                                    </div>
+                                    <div class="customer-card">
+                                        <div class="customer-info">
+                                            <div class="customer-details">
+                                                <h4>Maria Garcia</h4>
+                                                <p>Head of Sales • FinancePro</p>
+                                            </div>
+                                            <div class="customer-status status-lead">Hot Lead</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call Ribbon Integration Demo -->
+        <div class="call-ribbon-demo">
+            <div class="ribbon-content">
+                <div class="ribbon-left">
+                    <div class="call-info">
+                        <h4>Active Call - Sarah Johnson</h4>
+                        <p>+1 (555) 123-4567 • Chief Marketing Officer</p>
+                    </div>
+                    <div class="call-status">
+                        <div class="status-dot"></div>
+                        Connected
+                    </div>
+                </div>
+                <div class="ribbon-right">
+                    <div class="call-timer">02:34</div>
+                    <div class="call-controls">
+                        <button class="control-btn" title="Mute">🎤</button>
+                        <button class="control-btn" title="Hold">⏸️</button>
+                        <button class="control-btn" title="Add Participant">👥</button>
+                        <button class="control-btn hangup" title="Hang Up">📞</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Ribbon Demo -->
+        <div class="floating-ribbon">
+            <div class="floating-ribbon-header">
+                📞 Active Call
+            </div>
+            <div class="floating-ribbon-content">
+                <div class="call-info">
+                    <h4>Mike Chen</h4>
+                    <p>VP of Sales • GrowthStart LLC</p>
+                </div>
+                <div class="call-controls">
+                    <button class="control-btn" title="Mute">🎤</button>
+                    <button class="control-btn active" title="Hold">⏸️</button>
+                    <button class="control-btn" title="Add Participant">👥</button>
+                    <button class="control-btn hangup" title="Hang Up">📞</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Instructions -->
+        <div class="integration-instructions">
+            <h3>🔧 Integration Instructions</h3>
+            <div class="integration-steps">
+                <div class="integration-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Include the Widget Script</h4>
+                        <p>Add the IntalksAI Call Ribbon widget to your CRM page:</p>
+                        <div class="code-block">
+&lt;script src="https://your-domain.com/intalksai-call-ribbon.js"&gt;&lt;/script&gt;
+                        </div>
+                    </div>
+                </div>
+                <div class="integration-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Initialize the Ribbon</h4>
+                        <p>Configure the widget with your API credentials and callbacks:</p>
+                        <div class="code-block">
+ExotelCallRibbon.init({
+    apiKey: 'your-api-key',
+    apiUrl: 'https://your-api-domain.com',
+    position: 'bottom', // or 'floating'
+    onCallEvent: function(event, data) {
+        // Handle call events in your CRM
+        console.log('Call Event:', event, data);
+    }
+});
+                        </div>
+                    </div>
+                </div>
+                <div class="integration-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Load Customer Data</h4>
+                        <p>When a user selects a customer in your CRM, update the ribbon:</p>
+                        <div class="code-block">
+// When customer is selected in CRM
+ExotelCallRibbon.setCustomer({
+    phoneNumber: '+1-555-123-4567',
+    name: 'Sarah Johnson',
+    email: 'sarah@company.com',
+    customerId: 'CRM-12345'
+});
+                        </div>
+                    </div>
+                </div>
+                <div class="integration-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Customize Styling</h4>
+                        <p>Override CSS to match your CRM's design system:</p>
+                        <div class="code-block">
+.intalksai-call-ribbon {
+    --primary-color: #your-brand-color;
+    --font-family: 'Your CRM Font';
+    --border-radius: 8px;
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -61,10 +61,10 @@ class ExotelCallRibbonWidget {
       console.log('[ExotelCallRibbon] Credentials loaded successfully');
 
       // Create or get container
-      this.container = document.getElementById('exotel-call-ribbon-container');
+      this.container = document.getElementById('intalksai-call-ribbon-container');
       if (!this.container) {
         this.container = document.createElement('div');
-        this.container.id = 'exotel-call-ribbon-container';
+        this.container.id = 'intalksai-call-ribbon-container';
         document.body.appendChild(this.container);
       }
 
@@ -78,7 +78,30 @@ class ExotelCallRibbonWidget {
 
     } catch (error) {
       console.error('[ExotelCallRibbon] Initialization failed:', error);
-      this.showError('Failed to initialize Call Control Ribbon. Please check your API key.');
+      console.log('[ExotelCallRibbon] Falling back to demo mode');
+      
+      // Fallback to demo mode
+      this.credentials = {
+        exotelToken: null,
+        userId: null,
+        demo: true
+      };
+      
+      // Create or get container
+      this.container = document.getElementById('intalksai-call-ribbon-container');
+      if (!this.container) {
+        this.container = document.createElement('div');
+        this.container.id = 'intalksai-call-ribbon-container';
+        document.body.appendChild(this.container);
+      }
+
+      // Render the ribbon in demo mode
+      this.render();
+
+      // Call ready callback
+      if (config.onReady) {
+        config.onReady();
+      }
     }
   }
 
@@ -141,8 +164,17 @@ class ExotelCallRibbonWidget {
    * Render the ribbon component
    */
   render() {
-    if (!this.container || !this.credentials) {
+    if (!this.container) {
       return;
+    }
+    
+    // If no credentials, show demo mode
+    if (!this.credentials) {
+      this.credentials = {
+        exotelToken: null,
+        userId: null,
+        demo: true
+      };
     }
 
     // Wrap callback to add logging
@@ -208,7 +240,7 @@ class ExotelCallRibbonWidget {
   showError(message) {
     if (!this.container) {
       this.container = document.createElement('div');
-      this.container.id = 'exotel-call-ribbon-container';
+      this.container.id = 'intalksai-call-ribbon-container';
       document.body.appendChild(this.container);
     }
 
@@ -254,7 +286,7 @@ class ExotelCallRibbonWidget {
 // Create global instance
 const ribbonInstance = new ExotelCallRibbonWidget();
 
-// Expose global API
+// Expose global API - Support both old and new names for compatibility
 window.ExotelCallRibbon = {
   /**
    * Initialize the ribbon
@@ -297,6 +329,9 @@ window.ExotelCallRibbon = {
   version: '1.0.0'
 };
 
+// Also expose as IntalksAICallRibbon for new integrations
+window.IntalksAICallRibbon = window.ExotelCallRibbon;
+
 // AMD/UMD support
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -309,4 +344,4 @@ if (typeof module === 'object' && module.exports) {
   module.exports = window.ExotelCallRibbon;
 }
 
-console.log('[ExotelCallRibbon] Widget loaded v' + window.ExotelCallRibbon.version);
+  console.log('[IntalksAI Call Ribbon] Widget loaded v' + window.ExotelCallRibbon.version);

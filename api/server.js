@@ -1,11 +1,11 @@
 /**
- * Exotel Call Control Ribbon - Backend API Server
+ * IntalksAI Call Control Ribbon - Backend API Server
  * 
- * This server manages client authentication and Exotel credentials
+ * This server manages client authentication and telephony credentials
  * 
  * Features:
  * - Client API key validation
- * - Exotel credential management
+ * - Telephony credential management
  * - Call logging and analytics
  * - Usage tracking for billing
  */

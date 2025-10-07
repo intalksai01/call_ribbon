@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IntalksAI Call Ribbon - Live Test</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    h1 {
+      color: #1f2937;
+      margin-top: 0;
+    }
+    
+    .status {
+      background: #f0f9ff;
+      border: 2px solid #3b82f6;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    
+    .status.success {
+      background: #f0fdf4;
+      border-color: #10b981;
+    }
+    
+    .status.error {
+      background: #fef2f2;
+      border-color: #ef4444;
+    }
+    
+    .customer-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+      margin: 30px 0;
+    }
+    
+    .customer-card {
+      background: #f9fafb;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .customer-card:hover {
+      border-color: #3b82f6;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .customer-card.selected {
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+    }
+    
+    .customer-name {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    
+    .customer-phone {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    
+    .customer-info {
+      color: #9ca3af;
+      font-size: 12px;
+    }
+    
+    .instructions {
+      background: #fffbeb;
+      border: 2px solid #f59e0b;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    
+    .instructions h3 {
+      margin-top: 0;
+      color: #92400e;
+    }
+    
+    .instructions ol {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+    
+    .instructions li {
+      margin: 8px 0;
+      color: #78350f;
+    }
+    
+    .code {
+      background: #1f2937;
+      color: #10b981;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+    
+    .ribbon-info {
+      background: #f0f9ff;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 20px 0;
+    }
+    
+    .ribbon-info p {
+      margin: 5px 0;
+      color: #1e40af;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 IntalksAI Call Ribbon - Live Test</h1>
+    
+    <div id="status" class="status">
+      <strong>Status:</strong> <span id="status-text">Initializing...</span>
+    </div>
+    
+    <div class="instructions">
+      <h3>📋 How to Test:</h3>
+      <ol>
+        <li><strong>Wait for initialization</strong> - The ribbon will load automatically</li>
+        <li><strong>Click on a customer card</strong> below to load their phone number</li>
+        <li><strong>Look at the bottom of the page</strong> - You'll see the IntalksAI Call Ribbon</li>
+        <li><strong>Click the Dial button</strong> to test making a call</li>
+        <li><strong>Use the controls</strong> - Mute, Hold, DTMF keypad during calls</li>
+      </ol>
+    </div>
+    
+    <div class="ribbon-info">
+      <p><strong>🎯 Widget URL:</strong> https://intalksai-call-ribbon-widget-844605843483.s3.us-east-1.amazonaws.com</p>
+      <p><strong>🔧 API URL:</strong> http://production.eba-tpbtmere.us-east-1.elasticbeanstalk.com</p>
+      <p><strong>🔑 API Key:</strong> demo-api-key-789 (Demo credentials)</p>
+    </div>
+    
+    <h2>👥 Test Customers</h2>
+    <p>Click on any customer to load their details into the ribbon:</p>
+    
+    <div class="customer-list">
+      <div class="customer-card" onclick="selectCustomer('John Doe', '+919876543210', 'customer-001')">
+        <div class="customer-name">👨‍💼 John Doe</div>
+        <div class="customer-phone">📞 +91 987 654 3210</div>
+        <div class="customer-info">💰 Outstanding: $5,000</div>
+      </div>
+      
+      <div class="customer-card" onclick="selectCustomer('Jane Smith', '+918765432109', 'customer-002')">
+        <div class="customer-name">👩‍💼 Jane Smith</div>
+        <div class="customer-phone">📞 +91 876 543 2109</div>
+        <div class="customer-info">🎯 Lead: Premium Plan</div>
+      </div>
+      
+      <div class="customer-card" onclick="selectCustomer('Bob Johnson', '+917654321098', 'customer-003')">
+        <div class="customer-name">👨‍💻 Bob Johnson</div>
+        <div class="customer-phone">📞 +91 765 432 1098</div>
+        <div class="customer-info">🎫 Ticket: Login Issue</div>
+      </div>
+      
+      <div class="customer-card" onclick="selectCustomer('Alice Williams', '+919988776655', 'customer-004')">
+        <div class="customer-name">👩‍🔬 Alice Williams</div>
+        <div class="customer-phone">📞 +91 998 877 6655</div>
+        <div class="customer-info">💼 Enterprise Client</div>
+      </div>
+      
+      <div class="customer-card" onclick="selectCustomer('Charlie Brown', '+918877665544', 'customer-005')">
+        <div class="customer-name">👨‍🎨 Charlie Brown</div>
+        <div class="customer-phone">📞 +91 887 766 5544</div>
+        <div class="customer-info">🔥 Hot Lead</div>
+      </div>
+      
+      <div class="customer-card" onclick="selectCustomer('Diana Prince', '+917766554433', 'customer-006')">
+        <div class="customer-name">👩‍⚖️ Diana Prince</div>
+        <div class="customer-phone">📞 +91 776 655 4433</div>
+        <div class="customer-info">⭐ VIP Customer</div>
+      </div>
+    </div>
+    
+    <div class="instructions">
+      <h3>🎨 Ribbon Features to Test:</h3>
+      <ul>
+        <li><strong>Dial Button:</strong> Click to initiate a call</li>
+        <li><strong>Mute/Unmute:</strong> Toggle microphone during call</li>
+        <li><strong>Hold/Resume:</strong> Put call on hold</li>
+        <li><strong>DTMF Keypad:</strong> Send touch-tone digits (0-9, *, #)</li>
+        <li><strong>Minimize/Expand:</strong> Click ▼ to collapse the ribbon</li>
+        <li><strong>Call Timer:</strong> See real-time call duration</li>
+        <li><strong>Notifications:</strong> Watch for status messages</li>
+      </ul>
+    </div>
+    
+    <h3>📊 Event Log:</h3>
+    <div id="event-log" class="code"></div>
+    
+  </div>
+
+  <!-- Load the IntalksAI Call Ribbon -->
+  <link rel="stylesheet" href="https://intalksai-call-ribbon-widget-844605843483.s3.us-east-1.amazonaws.com/static/css/main.c883816c.css">
+  <script src="https://intalksai-call-ribbon-widget-844605843483.s3.us-east-1.amazonaws.com/static/js/main.48447990.js"></script>
+  
+  <script>
+    // Event log
+    function logEvent(message) {
+      const log = document.getElementById('event-log');
+      const timestamp = new Date().toLocaleTimeString();
+      log.innerHTML = `[${timestamp}] ${message}\n` + log.innerHTML;
+    }
+    
+    // Initialize the ribbon
+    setTimeout(() => {
+      try {
+        logEvent('🚀 Initializing IntalksAI Call Ribbon...');
+        
+        ExotelCallRibbon.init({
+          apiKey: 'demo-api-key-789',
+          apiUrl: 'http://production.eba-tpbtmere.us-east-1.elasticbeanstalk.com',
+          position: 'bottom',
+          onCallEvent: function(event, data) {
+            logEvent(`📞 Call Event: ${event} - ${JSON.stringify(data)}`);
+            console.log('Call Event:', event, data);
+          },
+          onReady: function() {
+            logEvent('✅ Ribbon initialized and ready!');
+            document.getElementById('status').className = 'status success';
+            document.getElementById('status-text').textContent = '✅ Ribbon loaded successfully! Click a customer to test.';
+          }
+        });
+        
+        logEvent('⏳ Waiting for ribbon to initialize...');
+      } catch (error) {
+        logEvent('❌ Error: ' + error.message);
+        document.getElementById('status').className = 'status error';
+        document.getElementById('status-text').textContent = '❌ Failed to load ribbon: ' + error.message;
+        console.error('Ribbon initialization error:', error);
+      }
+    }, 1000);
+    
+    // Select customer function
+    function selectCustomer(name, phone, customerId) {
+      logEvent(`👤 Selected customer: ${name} (${phone})`);
+      
+      // Highlight selected card
+      document.querySelectorAll('.customer-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      event.currentTarget.classList.add('selected');
+      
+      // Update ribbon with customer data
+      try {
+        ExotelCallRibbon.setCustomer({
+          phoneNumber: phone,
+          name: name,
+          customerId: customerId
+        });
+        logEvent(`✅ Customer loaded into ribbon: ${name}`);
+      } catch (error) {
+        logEvent(`❌ Error loading customer: ${error.message}`);
+      }
+    }
+    
+    // Log page load
+    logEvent('📄 Test page loaded');
+  </script>
+</body>
+</html>

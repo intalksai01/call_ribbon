@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Widget Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Simple Widget Test</h1>
+    <div id="status" class="status info">Loading...</div>
+    
+    <div>
+        <h3>Test Customer Selection:</h3>
+        <button class="btn-primary" onclick="selectCustomer('John Doe', '+919876543210')">John Doe</button>
+        <button class="btn-primary" onclick="selectCustomer('Jane Smith', '+918765432109')">Jane Smith</button>
+        <button class="btn-primary" onclick="selectCustomer('Bob Johnson', '+917654321098')">Bob Johnson</button>
+    </div>
+    
+    <div style="margin-top: 50px;">
+        <button class="btn-success" onclick="testWidget()">Test Widget Functions</button>
+        <button class="btn-success" onclick="checkGlobalAPI()">Check Global API</button>
+    </div>
+    
+    <div id="log" style="margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 5px; min-height: 100px;">
+        <strong>Debug Log:</strong><br>
+    </div>
+
+    <!-- Load the widget -->
+    <link rel="stylesheet" href="http://intalksai-call-ribbon-widget-844605843483.s3-website-us-east-1.amazonaws.com/static/css/main.77a39472.css">
+    <script src="http://intalksai-call-ribbon-widget-844605843483.s3-website-us-east-1.amazonaws.com/static/js/main.227be186.js"></script>
+    
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+            console.log(message);
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+        
+        // Wait for page to load
+        window.addEventListener('load', function() {
+            log('Page loaded');
+            updateStatus('Checking widget...', 'info');
+            
+            // Check if widget is loaded after a delay
+            setTimeout(() => {
+                checkGlobalAPI();
+            }, 2000);
+        });
+        
+        function checkGlobalAPI() {
+            log('Checking global API...');
+            
+            if (typeof window.ExotelCallRibbon !== 'undefined') {
+                log('✅ ExotelCallRibbon found!');
+                log(`Version: ${window.ExotelCallRibbon.version}`);
+                updateStatus('Widget loaded successfully!', 'success');
+                
+                // Try to initialize
+                try {
+                    window.ExotelCallRibbon.init({
+                        apiKey: 'demo-api-key-789',
+                        apiUrl: 'http://production.eba-tpbtmere.us-east-1.elasticbeanstalk.com',
+                        position: 'bottom',
+                        onReady: () => {
+                            log('✅ Widget initialized successfully');
+                            updateStatus('Widget ready for testing!', 'success');
+                        },
+                        onCallEvent: (event, data) => {
+                            log(`📞 Call event: ${event}`);
+                        }
+                    });
+                } catch (error) {
+                    log(`❌ Initialization failed: ${error.message}`);
+                    updateStatus('Widget initialization failed', 'error');
+                }
+            } else {
+                log('❌ ExotelCallRibbon not found');
+                log('Available window properties: ' + Object.keys(window).filter(k => k.includes('Call') || k.includes('Ribbon')).join(', '));
+                updateStatus('Widget not loaded', 'error');
+            }
+        }
+        
+        function selectCustomer(name, phone) {
+            log(`👤 Selecting customer: ${name} (${phone})`);
+            
+            if (typeof window.ExotelCallRibbon !== 'undefined') {
+                try {
+                    window.ExotelCallRibbon.setCustomer({
+                        phoneNumber: phone,
+                        name: name,
+                        customerId: `customer-${Date.now()}`
+                    });
+                    log(`✅ Customer set: ${name}`);
+                    updateStatus(`Customer loaded: ${name}`, 'success');
+                } catch (error) {
+                    log(`❌ Error setting customer: ${error.message}`);
+                    updateStatus('Error setting customer', 'error');
+                }
+            } else {
+                log('❌ Cannot set customer - widget not loaded');
+                updateStatus('Widget not available', 'error');
+            }
+        }
+        
+        function testWidget() {
+            log('🧪 Testing widget functions...');
+            
+            if (typeof window.ExotelCallRibbon !== 'undefined') {
+                try {
+                    // Test various functions
+                    log('Testing setPosition...');
+                    window.ExotelCallRibbon.setPosition('bottom');
+                    
+                    log('Testing setVisible...');
+                    window.ExotelCallRibbon.setVisible(true);
+                    
+                    log('Testing setMinimized...');
+                    window.ExotelCallRibbon.setMinimized(false);
+                    
+                    log('✅ All widget functions working!');
+                    updateStatus('Widget functions test passed!', 'success');
+                } catch (error) {
+                    log(`❌ Widget function test failed: ${error.message}`);
+                    updateStatus('Widget function test failed', 'error');
+                }
+            } else {
+                log('❌ Cannot test - widget not loaded');
+                updateStatus('Widget not available for testing', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

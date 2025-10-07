@@ -1,5 +1,5 @@
 {
-  "name": "exotel-call-ribbon-widget",
+  "name": "intalksai-call-ribbon-widget",
   "version": "1.0.0",
   "description": "Embeddable call control widget for CRM integration",
   "main": "dist/ribbon.js",

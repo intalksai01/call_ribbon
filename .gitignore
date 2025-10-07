@@ -45,3 +45,5 @@ Thumbs.db
 # Production secrets
 api/.env
 widget/.env
+
+
