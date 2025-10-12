@@ -1,16 +1,23 @@
-# 📞 Exotel Call Control Ribbon - CRM Integration Guide
+# 📞 IntalksAI Call Ribbon - Complete CRM Integration Guide
 
-## Quick Start for CRM Integration
+## 🎯 Overview
 
-This guide shows you exactly what to add to your CRM application to enable integrated calling capabilities.
+This guide provides everything you need to integrate the IntalksAI Call Ribbon into your CRM application. The widget enables seamless calling capabilities while automatically capturing call analytics for your business.
+
+**Key Benefits:**
+- ✅ One-line widget integration
+- ✅ Automatic call analytics
+- ✅ Flexible customer context tracking
+- ✅ No Exotel credential management needed
+- ✅ Works with any CRM platform
 
 ---
 
-## 🚀 **3-Step Integration**
+## 🚀 Quick Start (3 Steps)
 
-### **Step 1: Include the Widget Script**
+### **Step 1: Include the Widget**
 
-Add this script tag to your CRM application's HTML:
+Add this script tag to your CRM application:
 
 ```html
 <script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.3b847e89.js"></script>
@@ -18,140 +25,204 @@ Add this script tag to your CRM application's HTML:
 
 ### **Step 2: Initialize the Ribbon**
 
-Add this JavaScript code to initialize the widget:
-
 ```javascript
 ExotelCallRibbon.init({
   apiKey: 'your-api-key-here',
   apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
   position: 'bottom',
-  onCallEvent: function(event, data) {
-    console.log('Call event:', event, data);
-    // Handle call events in your CRM
+  onCallEvent: handleCallEvent,
+  onReady: () => console.log('Ribbon ready!')
+});
+```
+
+### **Step 3: Set Customer Context**
+
+**⚠️ IMPORTANT:** Send rich context data for meaningful analytics!
+
+```javascript
+ExotelCallRibbon.setCustomer({
+  // Required fields
+  phoneNumber: '+919876543210',
+  name: 'Rajesh Kumar',
+  customerId: 'LOAN001',
+  
+  // ⭐ CRITICAL FOR ANALYTICS - Send your business data
+  context: {
+    loanType: 'Business Loan',
+    loanAmount: 500000,
+    outstandingBalance: 150000,
+    daysOverdue: 45,
+    emiAmount: 15000,
+    riskCategory: 'Medium'
   },
-  onReady: function() {
-    console.log('Call ribbon is ready!');
+  
+  // Call metadata
+  callType: 'collections',  // collections, sales, support
+  agentId: 'AGT001',
+  agentName: 'Suresh Kumar',
+  metadata: {
+    campaign: 'overdue_45days',
+    attempt: 4
   }
 });
 ```
 
-### **Step 3: Load Customer Data**
-
-When a customer is selected in your CRM:
-
-```javascript
-function onCustomerSelected(customer) {
-  ExotelCallRibbon.setCustomer({
-    phoneNumber: customer.phone,
-    name: customer.name,
-    email: customer.email,
-    customerId: customer.id
-  });
-}
-```
-
-**That's it! Your CRM now has integrated calling.** ✅
+**That's it! You now have integrated calling + analytics.** ✅
 
 ---
 
-## 📋 **Complete Integration Example**
+## 📊 Why Context Data Matters
 
-### **HTML File:**
+### What You Send → What You Get
+
+| Data You Send | Analytics You Get |
+|---------------|-------------------|
+| `context.loanAmount` | Call patterns by loan size |
+| `context.daysOverdue` | Success rates by overdue bucket |
+| `callType` | Performance metrics by call type |
+| `agentId` | Individual agent performance |
+| `metadata.campaign` | Campaign effectiveness tracking |
+| Call duration | Average handling time analysis |
+
+**The more context you send, the better insights you get!**
+
+---
+
+## 💡 Complete Integration Examples
+
+### Example 1: Collections CRM
 
 ```html
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>My CRM Application</title>
+  <title>Collections CRM</title>
 </head>
 <body>
-  <!-- Your CRM Application -->
-  <div id="crm-app">
-    <h1>My CRM Dashboard</h1>
+  <div id="collections-dashboard">
+    <h1>Collections Dashboard</h1>
     
-    <!-- Customer List Example -->
-    <div class="customers">
-      <div class="customer-card" onclick="selectCustomer('John Doe', '+919876543210', 'CUST001')">
-        <h3>John Doe</h3>
-        <p>Phone: +919876543210</p>
-      </div>
-      
-      <div class="customer-card" onclick="selectCustomer('Jane Smith', '+918765432109', 'CUST002')">
-        <h3>Jane Smith</h3>
-        <p>Phone: +918765432109</p>
-      </div>
-    </div>
+    <!-- Customer List -->
+    <table id="customer-table">
+      <tr onclick="callCustomer('LOAN001')">
+        <td>LOAN001</td>
+        <td>Rajesh Kumar</td>
+        <td>+919876543210</td>
+        <td>₹1,50,000</td>
+        <td>45 days overdue</td>
+      </tr>
+    </table>
   </div>
 
-  <!-- Include Call Control Widget -->
+  <!-- Widget Script -->
   <script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.3b847e89.js"></script>
 
-  <!-- Initialize Widget -->
   <script>
-    // Initialize call ribbon
+    // Initialize once on page load
     ExotelCallRibbon.init({
-      apiKey: 'demo-api-key-789', // Replace with your API key
+      apiKey: 'your-collections-api-key',
       apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
-      position: 'bottom', // 'top', 'bottom', or 'floating'
+      position: 'bottom',
       onCallEvent: handleCallEvent,
-      onReady: function() {
-        console.log('Call ribbon ready!');
-      }
+      onReady: () => console.log('✅ Call ribbon ready!')
     });
 
-    // Handle customer selection
-    function selectCustomer(name, phone, id) {
+    // Call customer from your CRM
+    function callCustomer(loanId) {
+      // Get customer from your database
+      const customer = getCustomerFromDB(loanId);
+      
+      // Set customer with rich context
       ExotelCallRibbon.setCustomer({
-        phoneNumber: phone,
-        name: name,
-        customerId: id
+        // Required
+        phoneNumber: customer.phone,
+        name: customer.name,
+        customerId: customer.loanId,
+        
+        // Business context (critical for analytics!)
+        context: {
+          loanType: customer.loanType,
+          loanAmount: customer.loanAmount,
+          outstandingBalance: customer.outstanding,
+          daysOverdue: customer.daysOverdue,
+          emiAmount: customer.emiAmount,
+          lastPaymentDate: customer.lastPaymentDate,
+          collectionAttempts: customer.attemptCount,
+          riskCategory: customer.riskCategory
+        },
+        
+        // Call metadata
+        callType: 'collections',
+        agentId: getCurrentAgent().id,
+        agentName: getCurrentAgent().name,
+        metadata: {
+          campaign: 'overdue_campaign_q4',
+          bucket: 'DPD_30_60',
+          attempt: customer.attemptCount + 1,
+          priority: customer.priority
+        }
       });
+      
+      // Call will be initiated automatically
     }
 
     // Handle call events
     function handleCallEvent(event, data) {
-      console.log('Call Event:', event, data);
+      console.log('📞 Call Event:', event, data);
       
       switch(event) {
         case 'connected':
-          // Call connected - update CRM
-          updateCRMStatus(data.customerData.customerId, 'on_call');
-          startCallTimer(data);
+          // Update CRM - call connected
+          updateCustomerStatus(data.customerData.customerId, 'ON_CALL');
+          startCallTimer();
           break;
           
         case 'callEnded':
-          // Call ended - save to CRM
-          savCallRecord(data);
-          updateCRMStatus(data.customerData.customerId, 'call_completed');
+          // Update CRM - call ended
+          updateCustomerStatus(data.customerData.customerId, 'CALL_COMPLETED');
+          saveCallNotes(data.customerData.customerId, data.duration);
+          scheduleFollowUp(data.customerData.customerId);
           break;
           
         case 'incoming':
-          // Incoming call - show notification
-          showIncomingCallNotification(data);
+          // Incoming call - show popup
+          showIncomingCallPopup(data.phoneNumber);
           break;
       }
     }
 
     // Your CRM functions
-    function updateCRMStatus(customerId, status) {
-      // Update customer status in your CRM
-      console.log('Updating status:', customerId, status);
+    function getCustomerFromDB(loanId) {
+      // Fetch from your database
+      return {
+        loanId: 'LOAN001',
+        name: 'Rajesh Kumar',
+        phone: '+919876543210',
+        loanType: 'Business Loan',
+        loanAmount: 500000,
+        outstanding: 150000,
+        daysOverdue: 45,
+        emiAmount: 15000,
+        attemptCount: 3,
+        priority: 'High',
+        riskCategory: 'Medium',
+        lastPaymentDate: '2024-08-15'
+      };
     }
 
-    function saveCallRecord(data) {
-      // Save call record to your CRM database
-      console.log('Saving call record:', data);
+    function updateCustomerStatus(customerId, status) {
+      // Update in your CRM
+      console.log(`Update ${customerId} status to ${status}`);
     }
 
-    function showIncomingCallNotification(data) {
-      // Show notification for incoming call
-      alert('Incoming call from: ' + data.phoneNumber);
+    function saveCallNotes(customerId, duration) {
+      // Save to your CRM
+      console.log(`Save call notes for ${customerId}, duration: ${duration}s`);
     }
 
-    function startCallTimer(data) {
-      // Start call duration timer
-      console.log('Call started:', data);
+    function getCurrentAgent() {
+      // Get logged-in agent info
+      return { id: 'AGT001', name: 'Suresh Kumar' };
     }
   </script>
 </body>
@@ -160,1179 +231,579 @@ function onCustomerSelected(customer) {
 
 ---
 
-## 🔑 **Configuration Options**
-
-### **Required Parameters:**
+### Example 2: Sales CRM
 
 ```javascript
-{
-  apiKey: 'your-api-key-here',  // Provided by us
-  apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com'
+// Initialize for sales CRM
+ExotelCallRibbon.init({
+  apiKey: 'your-sales-api-key',
+  apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
+  position: 'floating',
+  onCallEvent: handleSalesCallEvent
+});
+
+// Call a lead
+function callLead(leadId) {
+  const lead = getLeadFromCRM(leadId);
+  
+  ExotelCallRibbon.setCustomer({
+    phoneNumber: lead.phone,
+    name: lead.name,
+    customerId: lead.leadId,
+    
+    context: {
+      leadSource: lead.source,          // Website, Referral, etc.
+      productInterest: lead.product,    // Which product
+      expectedValue: lead.dealValue,    // Deal size
+      leadScore: lead.score,            // 0-100
+      company: lead.company,
+      industry: lead.industry,
+      employeeCount: lead.employees,
+      currentProvider: lead.currentProvider
+    },
+    
+    callType: 'sales',
+    agentId: getCurrentSalesRep().id,
+    agentName: getCurrentSalesRep().name,
+    metadata: {
+      campaign: 'new_leads_q4',
+      stage: lead.stage,              // Qualification, Demo, etc.
+      lastInteraction: lead.lastContact,
+      nextAction: 'Product Demo'
+    }
+  });
 }
-```
 
-### **Optional Parameters:**
-
-```javascript
-{
-  position: 'bottom',  // 'top', 'bottom', or 'floating'
-  onCallEvent: function(event, data) { },  // Call event handler
-  onReady: function() { }  // Ready callback
+function handleSalesCallEvent(event, data) {
+  switch(event) {
+    case 'connected':
+      updateLeadStage(data.customerData.customerId, 'IN_CONVERSATION');
+      startCallScript('product_demo');
+      break;
+      
+    case 'callEnded':
+      showCallDispositionForm(data);
+      updateLeadScore(data.customerData.customerId, data.duration);
+      scheduleNextAction(data.customerData.customerId);
+      break;
+  }
 }
 ```
 
 ---
 
-## 📞 **Widget API Methods**
+### Example 3: Support CRM
 
-### **1. Initialize Widget**
 ```javascript
-ExotelCallRibbon.init(config);
+// Initialize for support
+ExotelCallRibbon.init({
+  apiKey: 'your-support-api-key',
+  apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
+  position: 'bottom',
+  onCallEvent: handleSupportCallEvent
+});
+
+// Call a customer with support ticket
+function callCustomerForSupport(ticketId) {
+  const ticket = getTicketFromCRM(ticketId);
+  
+  ExotelCallRibbon.setCustomer({
+    phoneNumber: ticket.customerPhone,
+    name: ticket.customerName,
+    customerId: ticket.customerId,
+    
+    context: {
+      ticketId: ticket.ticketId,
+      issueType: ticket.issueType,      // Technical, Billing, etc.
+      severity: ticket.severity,         // Low, Medium, High, Critical
+      productName: ticket.product,
+      subscriptionTier: ticket.tier,     // Basic, Pro, Enterprise
+      accountValue: ticket.accountValue,
+      issueCategory: ticket.category,
+      previousTickets: ticket.historyCount,
+      customerSatisfaction: ticket.csatScore
+    },
+    
+    callType: 'customer_service',
+    agentId: getCurrentSupportAgent().id,
+    agentName: getCurrentSupportAgent().name,
+    metadata: {
+      department: 'Technical Support',
+      sla: ticket.sla,
+      escalated: ticket.isEscalated,
+      priority: ticket.priority
+    }
+  });
+}
+
+function handleSupportCallEvent(event, data) {
+  switch(event) {
+    case 'connected':
+      openTicketPanel(data.customerData.context.ticketId);
+      loadCustomerHistory(data.customerData.customerId);
+      startSLATimer();
+      break;
+      
+    case 'callEnded':
+      updateTicketStatus(data.customerData.context.ticketId, 'RESOLVED');
+      sendCSATSurvey(data.customerData.customerId);
+      logResolution(data);
+      break;
+  }
+}
 ```
 
-### **2. Set Customer Data**
+---
+
+## 📞 Widget API Reference
+
+### Initialization
+
 ```javascript
-ExotelCallRibbon.setCustomer({
-  phoneNumber: '+919876543210',  // Required
-  name: 'John Doe',              // Optional
-  email: 'john@example.com',     // Optional
-  customerId: 'CUST001'          // Optional (your CRM ID)
+ExotelCallRibbon.init({
+  // Required
+  apiKey: 'your-api-key',
+  apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
+  
+  // Optional
+  position: 'bottom',  // 'top', 'bottom', 'floating'
+  onCallEvent: function(event, data) { },
+  onReady: function() { }
 });
 ```
 
-### **3. Change Position**
+### Set Customer Context
+
 ```javascript
-ExotelCallRibbon.setPosition('top');      // Move to top
-ExotelCallRibbon.setPosition('bottom');   // Move to bottom
-ExotelCallRibbon.setPosition('floating'); // Floating mode
+ExotelCallRibbon.setCustomer({
+  // ✅ Required
+  phoneNumber: '+919876543210',
+  name: 'Customer Name',
+  customerId: 'YOUR-CRM-ID',
+  
+  // ⭐ Highly Recommended
+  context: {
+    // ANY business-specific data
+    // This powers your analytics!
+  },
+  
+  // Recommended
+  callType: 'collections', // or 'sales', 'support', 'customer_service'
+  agentId: 'AGT001',
+  agentName: 'Agent Name',
+  metadata: {
+    campaign: 'campaign_name',
+    // any other tags
+  }
+});
 ```
 
-### **4. Show/Hide Widget**
-```javascript
-ExotelCallRibbon.setVisible(true);   // Show
-ExotelCallRibbon.setVisible(false);  // Hide
-```
+### Other Methods
 
-### **5. Minimize/Expand**
 ```javascript
-ExotelCallRibbon.setMinimized(true);   // Minimize
-ExotelCallRibbon.setMinimized(false);  // Expand
-```
+// Show/Hide Widget
+ExotelCallRibbon.setVisible(true);
+ExotelCallRibbon.setVisible(false);
 
-### **6. Make Call Programmatically**
-```javascript
+// Minimize/Expand
+ExotelCallRibbon.setMinimized(true);
+ExotelCallRibbon.setMinimized(false);
+
+// Change Position
+ExotelCallRibbon.setPosition('top');
+ExotelCallRibbon.setPosition('bottom');
+ExotelCallRibbon.setPosition('floating');
+
+// Make Call Programmatically
 ExotelCallRibbon.makeCall('+919876543210');
-```
 
-### **7. Destroy Widget**
-```javascript
-ExotelCallRibbon.destroy();  // Cleanup when done
+// Cleanup
+ExotelCallRibbon.destroy();
 ```
 
 ---
 
-## 📡 **Call Events**
+## 📡 Call Events
 
-### **Event Types:**
+### Event Types
 
 ```javascript
 function handleCallEvent(event, data) {
   switch(event) {
     case 'incoming':
       // Incoming call received
-      // data: { phoneNumber, callSid, ... }
       break;
       
     case 'connected':
-      // Call successfully connected
-      // data: { phoneNumber, callSid, customerData, ... }
+      // Call connected successfully
       break;
       
     case 'callEnded':
       // Call ended
-      // data: { phoneNumber, duration, customerData, ... }
       break;
       
     case 'mutetoggle':
       // Mute state changed
-      // data: { isMuted, ... }
       break;
       
     case 'holdtoggle':
       // Hold state changed
-      // data: { isOnHold, ... }
+      break;
+      
+    case 'dtmf':
+      // DTMF digit pressed
       break;
   }
 }
 ```
 
-### **Event Data Structure:**
+### Event Data Structure
 
 ```javascript
 {
-  // Call information
-  callSid: "CA1234567890abcdef",
+  // Call Info
+  callSid: "CA1234567890",
   phoneNumber: "+919876543210",
-  callDirection: "outbound", // or "inbound"
-  duration: 180, // seconds
+  callDirection: "outbound",
+  duration: 180,
   
-  // Customer data (from setCustomer)
+  // Customer Data (what you sent)
   customerData: {
     phoneNumber: "+919876543210",
-    name: "John Doe",
-    email: "john@example.com",
-    customerId: "CUST001"
+    name: "Customer Name",
+    customerId: "YOUR-ID",
+    context: { /* your business data */ },
+    callType: "collections",
+    agentId: "AGT001",
+    metadata: { /* your metadata */ }
   },
   
   // Metadata
-  timestamp: "2025-10-12T10:30:00Z",
-  domain: "yourcrm.com"
+  timestamp: "2024-10-12T10:30:00Z"
 }
 ```
 
 ---
 
-## 🔐 **API Key & Authentication**
+## 📊 Backend API Endpoints
 
-### **Getting Your API Key:**
+### Get Call History
 
-Contact us to receive your unique Client API Key. Example format:
-```
-yourcompany-api-key-123
-```
+```bash
+GET /api/ribbon/call-logs?page=1&pageSize=50
+Headers: x-api-key: your-api-key
 
-### **Security:**
-
-**What you provide:**
-- ✅ Your Client API Key only
-
-
-
-### **API Key Types:**
-
-```javascript
-// Demo/Testing
-'demo-api-key-789'  // All domains, 100 calls/month
-
-// Production Enterprise
-'yourcompany-api-key-123'  // Your domains, custom limits
+# Optional query params:
+- startDate: ISO date
+- endDate: ISO date
+- customerId: Your CRM customer ID
+- callDirection: inbound/outbound
 ```
 
----
-
-## 🌐 **Backend API Endpoints**
-
-### **Base URL:**
-```
-http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com
-```
-
-### **Available Endpoints:**
-
-#### **1. Initialize Ribbon**
-```
-POST /api/ribbon/init
-
-Request:
+**Response:**
+```json
 {
-  "apiKey": "your-api-key-123",
-  "domain": "yourcrm.com"
-}
-
-Response:
-{
-  "exotelToken": "...", // Managed by widget, not by you
-  "userId": "...",      // Managed by widget, not by you
-  "features": ["call", "mute", "hold", "dtmf"],
-  "clientInfo": {
-    "name": "Your Company",
-    "plan": "enterprise",
-    "remainingCalls": 9995
+  "logs": [
+    {
+      "session_id": "uuid",
+      "customer_name": "Rajesh Kumar",
+      "customer_phone": "+919876543210",
+      "customer_id_external": "LOAN001",
+      "customer_context": {
+        "loanType": "Business Loan",
+        "outstandingBalance": 150000
+      },
+      "call_type": "collections",
+      "call_status": "completed",
+      "duration": 270,
+      "initiated_at": "2024-10-12T10:30:00Z",
+      "agent_name": "Suresh Kumar",
+      "metadata": {
+        "campaign": "overdue_45days"
+      }
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "pageSize": 50,
+    "total": 234,
+    "totalPages": 5
   }
 }
 ```
 
-#### **2. Log Call Events**
-```
-POST /api/ribbon/log-call
+### Get Customer Call History
 
-Request:
-{
-  "apiKey": "your-api-key-123",
-  "event": "connected",
-  "data": { ... },
-  "timestamp": "2025-10-12T10:30:00Z",
-  "domain": "yourcrm.com"
-}
-
-Response:
-{
-  "success": true,
-  "logId": "log-1234567890-abc"
-}
+```bash
+GET /api/ribbon/customer/{customerId}/calls?limit=50
+Headers: x-api-key: your-api-key
 ```
 
-#### **3. Get Configuration**
-```
-GET /api/ribbon/config
-Headers: X-API-Key: your-api-key-123
+### Get Analytics
 
-Response:
-{
-  "features": ["call", "mute", "hold"],
-  "plan": "enterprise",
-  "usage": {
-    "callsThisMonth": 125,
-    "limit": 10000,
-    "remaining": 9875
-  }
-}
-```
-
-#### **4. Get Analytics**
-```
+```bash
 GET /api/ribbon/analytics
-Headers: X-API-Key: your-api-key-123
+Headers: x-api-key: your-api-key
+```
 
-Response:
+**Response:**
+```json
 {
-  "totalCalls": 125,
-  "totalDuration": 22500,
-  "incomingCalls": 45,
-  "outgoingCalls": 80,
-  "recentCalls": [ ... ]
-}
-```
-
-#### **5. Health Check**
-```
-GET /health
-
-Response:
-{
-  "status": "healthy",
-  "version": "1.0.0",
-  "uptime": 86400
-}
-```
-
----
-
-## 💼 **CRM Integration Examples**
-
-### **React Application:**
-
-```jsx
-import React, { useEffect } from 'react';
-
-function CRMDashboard() {
-  useEffect(() => {
-    // Initialize on component mount
-    if (window.ExotelCallRibbon) {
-      window.ExotelCallRibbon.init({
-        apiKey: process.env.REACT_APP_EXOTEL_API_KEY,
-        apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
-        position: 'bottom',
-        onCallEvent: handleCallEvent
-      });
-    }
-    
-    // Cleanup on unmount
-    return () => {
-      if (window.ExotelCallRibbon) {
-        window.ExotelCallRibbon.destroy();
-      }
-    };
-  }, []);
-
-  const handleCustomerClick = (customer) => {
-    window.ExotelCallRibbon.setCustomer({
-      phoneNumber: customer.phone,
-      name: customer.name,
-      customerId: customer.id
-    });
-  };
-
-  const handleCallEvent = (event, data) => {
-    console.log('Call event:', event, data);
-    // Update your CRM state/database
-  };
-
-  return (
-    <div>
-      {/* Your CRM UI */}
-      <CustomerList onCustomerClick={handleCustomerClick} />
-    </div>
-  );
-}
-```
-
-### **Angular Application:**
-
-```typescript
-import { Component, OnInit, OnDestroy } from '@angular/core';
-
-declare global {
-  interface Window {
-    ExotelCallRibbon: any;
-  }
-}
-
-@Component({
-  selector: 'app-crm-dashboard',
-  template: `
-    <div>
-      <app-customer-list (customerSelected)="onCustomerSelected($event)">
-      </app-customer-list>
-    </div>
-  `
-})
-export class CRMDashboardComponent implements OnInit, OnDestroy {
-  
-  ngOnInit() {
-    // Load widget script dynamically
-    const script = document.createElement('script');
-    script.src = 'https://d2t5fsybshqnye.cloudfront.net/static/js/main.3b847e89.js';
-    script.onload = () => {
-      this.initializeRibbon();
-    };
-    document.body.appendChild(script);
-  }
-
-  initializeRibbon() {
-    window.ExotelCallRibbon.init({
-      apiKey: environment.exotelApiKey,
-      apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
-      position: 'bottom',
-      onCallEvent: this.handleCallEvent.bind(this),
-      onReady: () => {
-        console.log('Ribbon ready!');
-      }
-    });
-  }
-
-  onCustomerSelected(customer: any) {
-    window.ExotelCallRibbon.setCustomer({
-      phoneNumber: customer.phone,
-      name: customer.name,
-      customerId: customer.id
-    });
-  }
-
-  handleCallEvent(event: string, data: any) {
-    console.log('Call event:', event, data);
-    // Update your CRM
-  }
-
-  ngOnDestroy() {
-    if (window.ExotelCallRibbon) {
-      window.ExotelCallRibbon.destroy();
-    }
-  }
-}
-```
-
-### **Vue.js Application:**
-
-```vue
-<template>
-  <div id="crm-app">
-    <CustomerList @customer-selected="onCustomerSelected" />
-  </div>
-</template>
-
-<script>
-export default {
-  name: 'CRMDashboard',
-  
-  mounted() {
-    // Load widget script
-    const script = document.createElement('script');
-    script.src = 'https://d2t5fsybshqnye.cloudfront.net/static/js/main.3b847e89.js';
-    script.onload = () => {
-      this.initializeRibbon();
-    };
-    document.body.appendChild(script);
+  "summary": {
+    "totalCalls": 1250,
+    "totalDuration": 335600,
+    "avgDuration": 268,
+    "inboundCalls": 320,
+    "outboundCalls": 930,
+    "missedCalls": 45
   },
-  
-  methods: {
-    initializeRibbon() {
-      window.ExotelCallRibbon.init({
-        apiKey: process.env.VUE_APP_EXOTEL_API_KEY,
-        apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
-        position: 'bottom',
-        onCallEvent: this.handleCallEvent,
-        onReady: () => {
-          console.log('Ribbon ready!');
-        }
-      });
-    },
-    
-    onCustomerSelected(customer) {
-      window.ExotelCallRibbon.setCustomer({
-        phoneNumber: customer.phone,
-        name: customer.name,
-        customerId: customer.id
-      });
-    },
-    
-    handleCallEvent(event, data) {
-      console.log('Call event:', event, data);
-      // Update your CRM
-    }
-  },
-  
-  beforeUnmount() {
-    if (window.ExotelCallRibbon) {
-      window.ExotelCallRibbon.destroy();
-    }
-  }
-}
-</script>
-```
-
-### **Vanilla JavaScript (Plain HTML/JS):**
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <title>CRM Application</title>
-</head>
-<body>
-  <div id="customers">
-    <!-- Your customer list -->
-  </div>
-
-  <!-- Include widget -->
-  <script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.3b847e89.js"></script>
-  
-  <script>
-    // Wait for widget to load
-    window.addEventListener('load', function() {
-      // Initialize
-      ExotelCallRibbon.init({
-        apiKey: 'demo-api-key-789',
-        apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
-        position: 'bottom',
-        onCallEvent: function(event, data) {
-          console.log('Call Event:', event, data);
-        }
-      });
-    });
-
-    // Set customer when selected
-    function selectCustomer(phone, name, id) {
-      ExotelCallRibbon.setCustomer({
-        phoneNumber: phone,
-        name: name,
-        customerId: id
-      });
-    }
-  </script>
-</body>
-</html>
-```
-
----
-
-## 🎨 **Widget Positioning**
-
-### **Bottom Position (Default):**
-```javascript
-position: 'bottom'
-```
-Widget appears at bottom of screen, fixed position.
-
-### **Top Position:**
-```javascript
-position: 'top'
-```
-Widget appears at top of screen, fixed position.
-
-### **Floating Position:**
-```javascript
-position: 'floating'
-```
-Widget can be dragged anywhere on screen.
-
----
-
-## 🔔 **Handling Call Events in Your CRM**
-
-### **Collections CRM Example:**
-
-```javascript
-function handleCallEvent(event, data) {
-  switch(event) {
-    case 'connected':
-      // Mark customer as "contacted" in database
-      markCustomerContacted(data.customerData.customerId);
-      
-      // Show call scripts for agent
-      showCollectionScripts(data.customerData);
-      break;
-      
-    case 'callEnded':
-      // Save call outcome
-      saveCallOutcome({
-        customerId: data.customerData.customerId,
-        duration: data.duration,
-        timestamp: data.timestamp
-      });
-      
-      // Show follow-up form
-      showFollowUpForm(data.customerData);
-      break;
+  "callsByDate": { "2024-10-12": 45 },
+  "usage": {
+    "callsThisMonth": 1250,
+    "limit": 20000,
+    "remaining": 18750
   }
 }
 ```
 
-### **Support CRM Example:**
+### Get Detailed Analytics
 
-```javascript
-function handleCallEvent(event, data) {
-  switch(event) {
-    case 'incoming':
-      // Auto-create ticket from incoming call
-      createTicket({
-        phone: data.phoneNumber,
-        source: 'incoming_call',
-        timestamp: data.timestamp
-      });
-      break;
-      
-    case 'connected':
-      // Load customer history
-      loadCustomerHistory(data.customerData.customerId);
-      
-      // Start call recording note
-      startCallNote(data.callSid);
-      break;
-      
-    case 'callEnded':
-      // Add call note to ticket
-      addCallNoteToTicket({
-        ticketId: data.customerData.customerId,
-        duration: data.duration,
-        notes: getCallNotes()
-      });
-      break;
-  }
-}
+```bash
+GET /api/ribbon/analytics/detailed
+Headers: x-api-key: your-api-key
 ```
 
-### **Sales CRM Example:**
+**Response includes:**
+- `callsByHour` - Call volume by hour of day
+- `callsByDayOfWeek` - Call volume by day
+- `topCustomers` - Most called customers
+- `durationBuckets` - Call duration distribution
 
-```javascript
-function handleCallEvent(event, data) {
-  switch(event) {
-    case 'connected':
-      // Update lead status to "contacted"
-      updateLeadStatus(data.customerData.customerId, 'contacted');
-      
-      // Start sales script
-      showSalesScript(data.customerData);
-      break;
-      
-    case 'callEnded':
-      // Show call outcome form
-      showOutcomeForm({
-        leadId: data.customerData.customerId,
-        duration: data.duration,
-        options: ['interested', 'not_interested', 'callback', 'no_answer']
-      });
-      
-      // Schedule follow-up
-      suggestFollowUp(data.customerData);
-      break;
-  }
-}
+### Export Data
+
+```bash
+GET /api/ribbon/export/calls?format=csv
+Headers: x-api-key: your-api-key
 ```
+
+Exports to CSV or JSON format.
 
 ---
 
-## 🎛️ **Advanced Integration**
+## 🔑 API Key & Authentication
 
-### **Dynamic API Key (Recommended for Multi-Tenant):**
+### Getting Your API Key
 
+Contact us to get your unique API key:
+- 📧 Email: contact@intalksai.com
+- 🌐 Website: https://callribbon.intalksai.com
+
+**API Key Format:** `yourcompany-api-key-2024`
+
+### Security
+
+- ✅ We manage Exotel credentials (you don't need to)
+- ✅ API keys authenticate your application
+- ✅ Domain restrictions available
+- ✅ Usage limits per plan
+- ✅ Secure HTTPS communication
+
+### Plans
+
+| Plan | Monthly Calls | Features |
+|------|--------------|----------|
+| Trial | 100 | Basic calling |
+| Starter | 1,000 | + Analytics |
+| Professional | 5,000 | + API access |
+| Enterprise | 20,000+ | + Custom features |
+
+---
+
+## 🎯 Context Data Best Practices
+
+### 1. Be Consistent
+
+Use the same field names across all calls:
+
+✅ **Good:**
 ```javascript
-// Fetch API key from your backend
-fetch('/api/get-call-ribbon-config')
-  .then(response => response.json())
-  .then(config => {
-    ExotelCallRibbon.init({
-      apiKey: config.apiKey,  // From your backend
-      apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
-      position: 'bottom',
-      onCallEvent: handleCallEvent
-    });
-  });
-```
-
-### **Integration with CRM Workflows:**
-
-```javascript
-// Example: Salesforce-like integration
-function handleCallEvent(event, data) {
-  if (event === 'connected') {
-    // Create task in CRM
-    createTask({
-      type: 'Call',
-      subject: `Call with ${data.customerData.name}`,
-      relatedTo: data.customerData.customerId,
-      startTime: data.timestamp
-    });
-  }
-  
-  if (event === 'callEnded') {
-    // Update task with duration
-    updateTask({
-      duration: data.duration,
-      endTime: new Date().toISOString(),
-      status: 'Completed'
-    });
-    
-    // Log activity
-    logActivity({
-      type: 'call',
-      customerId: data.customerData.customerId,
-      duration: data.duration
-    });
-  }
+context: {
+  loanAmount: 500000,
+  daysOverdue: 45
 }
 ```
 
-### **Keyboard Shortcuts:**
-
-The widget includes built-in keyboard shortcuts:
-
-```
-Ctrl/Cmd + D  - Dial
-Ctrl/Cmd + M  - Mute/Unmute
-Ctrl/Cmd + H  - Hold/Resume
-Ctrl/Cmd + C  - Hangup
-Space         - Minimize/Expand (when focused)
+❌ **Bad:**
+```javascript
+// Different field names each time
+context: {
+  loan_amt: 500000,    // Sometimes this
+  LoanAmount: 600000,  // Sometimes this
+  amount: 700000       // Sometimes this
+}
 ```
 
-Agents can use these for faster workflow.
+### 2. Send Relevant Data
+
+Collections CRM should send:
+- Loan details
+- Payment history
+- Overdue information
+
+Sales CRM should send:
+- Lead source
+- Product interest
+- Deal value
+
+Support CRM should send:
+- Ticket details
+- Issue type
+- Customer tier
+
+### 3. Use Metadata for Tags
+
+```javascript
+metadata: {
+  campaign: 'q4_collections',
+  priority: 'high',
+  source: 'auto_dialer'
+}
+```
+
+### 4. Include Agent Info
+
+Always include agent details:
+```javascript
+agentId: 'AGT001',
+agentName: 'Suresh Kumar'
+```
+
+### 5. Set Call Type
+
+Use consistent call types:
+- `collections`
+- `sales`
+- `customer_service`
+- `support`
+- `follow_up`
 
 ---
 
-## 🧪 **Testing Your Integration**
+## 🔧 Troubleshooting
 
-### **Step 1: Test with Demo API Key**
-
-```javascript
-ExotelCallRibbon.init({
-  apiKey: 'demo-api-key-789',  // Public demo key
-  apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
-  position: 'bottom'
-});
-```
-
-### **Step 2: Test Customer Selection**
+### Widget Not Loading
 
 ```javascript
-ExotelCallRibbon.setCustomer({
-  phoneNumber: '+919876543210',
-  name: 'Test Customer',
-  customerId: 'TEST001'
-});
-```
-
-### **Step 3: Test Call Flow**
-
-1. Click "Dial" button (or press Ctrl+D)
-2. Watch call timer start
-3. Test mute/unmute button
-4. Test hold/resume button
-5. Open DTMF keypad
-6. Click hangup
-
-### **Step 4: Verify Events**
-
-Open browser console (F12) and verify:
-- Init event logged
-- Call events firing
-- Customer data in event payload
-- No JavaScript errors
-
----
-
-## 🐛 **Troubleshooting**
-
-### **Widget Not Loading:**
-
-```javascript
-// Check if script loaded
+// Check if widget loaded
 if (typeof ExotelCallRibbon === 'undefined') {
-  console.error('Widget script not loaded');
-  // Check script URL is correct
+  console.error('Widget not loaded! Check script URL');
 }
 ```
 
-### **API Key Invalid:**
+### API Key Invalid
 
 ```javascript
-// Widget will show error
-// Check browser console for:
-// "Invalid API key" or "Domain not allowed"
-
-// Verify:
-// 1. API key is correct
-// 2. Your domain is whitelisted
-// 3. Usage limit not exceeded
-```
-
-### **Calls Not Working:**
-
-```javascript
-// Widget runs in demo mode if:
-// - API credentials invalid
-// - Network error
-// - Exotel service down
-
-// Demo mode allows testing UI without real calls
-// Check console for "Demo mode" messages
-```
-
-### **CORS Errors:**
-
-```javascript
-// If you see CORS errors:
-// Contact us to whitelist your domain
-
-// Current CORS: '*' (all domains)
-// Production: Restricted to your domains
-```
-
----
-
-## 📱 **Mobile Responsive**
-
-The widget is fully mobile responsive:
-
-- ✅ Touch-friendly buttons
-- ✅ Drag support on mobile
-- ✅ Responsive layout
-- ✅ Works on iOS Safari
-- ✅ Works on Android Chrome
-
-**No additional mobile configuration needed.**
-
----
-
-## 🔒 **Security Best Practices**
-
-### **1. Protect Your API Key:**
-
-```javascript
-// ✅ GOOD: Environment variable
-const apiKey = process.env.REACT_APP_EXOTEL_KEY;
-
-// ✅ GOOD: Fetch from your backend
-fetch('/api/config').then(r => r.json()).then(config => {
-  ExotelCallRibbon.init({ apiKey: config.apiKey });
-});
-
-// ⚠️ ACCEPTABLE: Hardcoded (if domain-restricted)
-const apiKey = 'yourcompany-api-key-123';
-
-// ❌ NEVER: Expose Exotel credentials
-// You don't have them anyway - we manage them!
-```
-
-### **2. Validate Phone Numbers:**
-
-```javascript
-function validatePhone(phone) {
-  // E.164 format: +[country][number]
-  const regex = /^\+[1-9]\d{1,14}$/;
-  return regex.test(phone);
-}
-
-// Before setting customer
-if (validatePhone(customer.phone)) {
-  ExotelCallRibbon.setCustomer(customer);
-}
-```
-
-### **3. Handle Sensitive Data:**
-
-```javascript
-// Don't log sensitive data
-function handleCallEvent(event, data) {
-  // ❌ Don't log full customer data in production
-  console.log('Full data:', data);
-  
-  // ✅ Log event type only
-  console.log('Event:', event);
-  
-  // Send to your secure backend
-  saveToSecureBackend(event, data);
-}
-```
-
----
-
-## 📊 **Usage Limits**
-
-### **Demo API Key:**
-- **Limit:** 100 calls/month
-- **Domains:** All domains allowed
-- **Use for:** Testing and development
-
-### **Production API Keys:**
-- **Enterprise:** 10,000 calls/month
-- **Professional:** 5,000 calls/month
-- **Starter:** 1,000 calls/month
-- **Domains:** Restricted to your domains
-
-### **Checking Usage:**
-
-```javascript
+// Test API key
 fetch('http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/api/ribbon/config', {
-  headers: {
-    'X-API-Key': 'your-api-key-123'
-  }
+  headers: { 'x-api-key': 'your-api-key' }
 })
 .then(r => r.json())
-.then(config => {
-  console.log('Usage:', config.usage);
-  // { callsThisMonth: 125, limit: 10000, remaining: 9875 }
-});
+.then(data => console.log('API Key valid:', data))
+.catch(err => console.error('API Key invalid:', err));
 ```
 
----
+### Calls Not Working
 
-## 🎯 **Quick Integration Checklist**
-
-- [ ] Include widget script in CRM HTML
-- [ ] Initialize widget with API key
-- [ ] Add customer selection handler
-- [ ] Implement call event handler
-- [ ] Test with demo API key
-- [ ] Verify events in console
-- [ ] Test on desktop browser
-- [ ] Test on mobile device
-- [ ] Get production API key
-- [ ] Update to production API key
-- [ ] Configure domain whitelist
-- [ ] Go live!
+1. Check Exotel credentials are configured (contact us)
+2. Verify API key is active
+3. Check browser console for errors
+4. Ensure customer phone number is in correct format
 
 ---
 
-## 📞 **Support & Resources**
+## 📱 Mobile Support
 
-### **Demo & Testing:**
-- **Live Demo:** https://d2t5fsybshqnye.cloudfront.net
-- **Demo API Key:** `demo-api-key-789`
-
-### **API Endpoints:**
-- **Mumbai API:** http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com
-- **Health Check:** http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/health
-
-### **Documentation:**
-- **Architecture:** `/docs/ARCHITECTURE_DIAGRAM.md`
-- **Full Integration Guide:** `/docs/CLIENT_INTEGRATION_GUIDE.md`
-- **Live Demo Info:** `/docs/LIVE_DEMO_INFO.md`
-
-### **Getting Help:**
-- **Email:** support@yourcompany.com
-- **API Status:** Check `/health` endpoint
-- **Browser Console:** Check for error messages
+The widget is fully responsive and works on:
+- ✅ Desktop browsers
+- ✅ Mobile browsers
+- ✅ Tablets
+- ✅ iOS Safari
+- ✅ Android Chrome
 
 ---
 
-## 💡 **Common Integration Patterns**
+## 🌐 Browser Support
 
-### **Pattern 1: Auto-Dial on Customer Select**
-
-```javascript
-function selectCustomer(customer) {
-  ExotelCallRibbon.setCustomer({
-    phoneNumber: customer.phone,
-    name: customer.name,
-    customerId: customer.id
-  });
-  
-  // Optionally auto-dial
-  if (customer.autoCall) {
-    ExotelCallRibbon.makeCall(customer.phone);
-  }
-}
-```
-
-### **Pattern 2: Call Queue Management**
-
-```javascript
-let callQueue = [];
-
-function addToCallQueue(customer) {
-  callQueue.push(customer);
-  processNextCall();
-}
-
-function processNextCall() {
-  if (callQueue.length === 0) return;
-  
-  const nextCustomer = callQueue.shift();
-  ExotelCallRibbon.setCustomer(nextCustomer);
-  ExotelCallRibbon.makeCall(nextCustomer.phoneNumber);
-}
-
-function handleCallEvent(event, data) {
-  if (event === 'callEnded') {
-    // Process next in queue
-    setTimeout(processNextCall, 2000);
-  }
-}
-```
-
-### **Pattern 3: Call Recording & Notes**
-
-```javascript
-let currentCallNotes = '';
-
-function handleCallEvent(event, data) {
-  if (event === 'connected') {
-    // Show notes interface
-    showNotesPanel();
-    currentCallNotes = '';
-  }
-  
-  if (event === 'callEnded') {
-    // Save call with notes
-    saveCallRecord({
-      customerId: data.customerData.customerId,
-      duration: data.duration,
-      notes: currentCallNotes,
-      timestamp: data.timestamp
-    });
-  }
-}
-
-function updateCallNotes(notes) {
-  currentCallNotes = notes;
-}
-```
+- ✅ Chrome (recommended)
+- ✅ Firefox
+- ✅ Safari
+- ✅ Edge
+- ⚠️ IE11 (limited support)
 
 ---
 
-## 🚀 **Go Live Checklist**
+## 📚 Additional Resources
 
-### **Before Production:**
-
-- [ ] Test with demo API key
-- [ ] Verify all call events work
-- [ ] Test on different browsers
-- [ ] Test on mobile devices
-- [ ] Implement error handling
-- [ ] Add call logging to your database
-
-### **Production Setup:**
-
-- [ ] Request production API key from us
-- [ ] Provide domain whitelist
-- [ ] Update widget config with production key
-- [ ] Test with production key
-- [ ] Monitor usage in dashboard
-- [ ] Set up alerting for errors
-
-### **Post-Launch:**
-
-- [ ] Monitor call quality
-- [ ] Track usage metrics
-- [ ] Gather agent feedback
-- [ ] Optimize workflows
-- [ ] Plan feature enhancements
+- 📖 Full API Documentation: `docs/CLIENT_API_GUIDE.md`
+- ⚡ Quick Reference: `docs/QUICK_REFERENCE.md`
+- 🗄️ Database Schema: `database/SCHEMA_COMPARISON.md`
+- 🔐 Security Guide: Contact us
 
 ---
 
-## 📋 **Minimum Requirements**
+## 🆘 Support
 
-### **Browser Support:**
-- Chrome 80+
-- Firefox 75+
-- Safari 13+
-- Edge 80+
+### Contact Us
 
-### **Network:**
-- HTTPS recommended (for security)
-- Stable internet connection
-- Microphone access for agents
+- 📧 Email: contact@intalksai.com
+- 📚 Documentation: https://docs.callribbon.intalksai.com
+- 💬 Slack Community: (invite link)
 
-### **Your CRM:**
-- Can include external JavaScript
-- Can make CORS requests
-- Modern JavaScript support (ES6+)
+### SLA
+
+- Response Time: 24 hours
+- Critical Issues: 4 hours
+- Uptime: 99.9%
 
 ---
 
-## 💼 **Example: Complete CRM Integration**
+## ✅ Integration Checklist
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Collections CRM</title>
-  <style>
-    .customer-list { padding: 20px; }
-    .customer-card {
-      border: 1px solid #ddd;
-      padding: 15px;
-      margin: 10px 0;
-      cursor: pointer;
-    }
-    .customer-card:hover { background: #f0f0f0; }
-    .customer-card.calling { background: #e3f2fd; }
-  </style>
-</head>
-<body>
-  <div class="crm-container">
-    <h1>Collections Dashboard</h1>
-    
-    <div class="customer-list" id="customerList">
-      <!-- Customers will be loaded here -->
-    </div>
-  </div>
+Before going live, ensure:
 
-  <!-- Include Call Ribbon Widget -->
-  <script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.3b847e89.js"></script>
-
-  <script>
-    // Your customer data
-    const customers = [
-      { id: 'C001', name: 'John Doe', phone: '+919876543210', balance: 5000 },
-      { id: 'C002', name: 'Jane Smith', phone: '+918765432109', balance: 3500 }
-    ];
-
-    // Render customers
-    function renderCustomers() {
-      const list = document.getElementById('customerList');
-      list.innerHTML = customers.map(c => `
-        <div class="customer-card" data-id="${c.id}" onclick="selectCustomer('${c.id}')">
-          <h3>${c.name}</h3>
-          <p>Phone: ${c.phone}</p>
-          <p>Balance: $${c.balance}</p>
-        </div>
-      `).join('');
-    }
-
-    // Initialize widget
-    ExotelCallRibbon.init({
-      apiKey: 'collections-crm-api-key-123',
-      apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
-      position: 'bottom',
-      onCallEvent: handleCallEvent,
-      onReady: function() {
-        console.log('Call ribbon ready!');
-        renderCustomers();
-      }
-    });
-
-    // Handle customer selection
-    function selectCustomer(customerId) {
-      const customer = customers.find(c => c.id === customerId);
-      
-      // Highlight selected
-      document.querySelectorAll('.customer-card').forEach(el => {
-        el.classList.remove('calling');
-      });
-      document.querySelector(`[data-id="${customerId}"]`).classList.add('calling');
-      
-      // Load into ribbon
-      ExotelCallRibbon.setCustomer({
-        phoneNumber: customer.phone,
-        name: customer.name,
-        customerId: customer.id
-      });
-    }
-
-    // Handle call events
-    function handleCallEvent(event, data) {
-      console.log('Call Event:', event, data);
-      
-      switch(event) {
-        case 'connected':
-          console.log('Call connected to:', data.customerData.name);
-          // Update UI, show call scripts, etc.
-          break;
-          
-        case 'callEnded':
-          console.log('Call ended. Duration:', data.duration, 'seconds');
-          // Save to database, show follow-up form
-          saveCallRecord(data);
-          break;
-      }
-    }
-
-    // Save call to your backend
-    function saveCallRecord(data) {
-      fetch('/api/calls/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customerId: data.customerData.customerId,
-          phone: data.phoneNumber,
-          duration: data.duration,
-          timestamp: data.timestamp
-        })
-      });
-    }
-  </script>
-</body>
-</html>
-```
+- [ ] Widget script included
+- [ ] API key configured
+- [ ] `init()` called on page load
+- [ ] `setCustomer()` called before each call
+- [ ] **Context data** being sent (critical!)
+- [ ] Call type specified
+- [ ] Agent info included
+- [ ] Metadata for campaigns added
+- [ ] Event handlers implemented
+- [ ] Error handling in place
+- [ ] Tested with real calls
+- [ ] Analytics data verified
+- [ ] Production API key obtained
 
 ---
 
-## 📝 **Integration Summary**
+## 🚀 Go Live
 
-### **What You Need:**
+**Ready to deploy?**
 
-1. **Widget Script URL:**
-   ```
-   https://d2t5fsybshqnye.cloudfront.net/static/js/main.3b847e89.js
-   ```
+1. Replace demo API key with production key
+2. Test with a few calls
+3. Verify analytics data
+4. Roll out to your team
+5. Monitor usage dashboard
 
-2. **Your Client API Key:**
-   ```
-   Contact us to get: yourcompany-api-key-123
-   Demo key available: demo-api-key-789
-   ```
-
-3. **API Base URL:**
-   ```
-   http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com
-   ```
-
-4. **3 Lines of Code:**
-   ```javascript
-   // 1. Include script
-   <script src="widget-url"></script>
-   
-   // 2. Initialize
-   ExotelCallRibbon.init({ apiKey: 'your-key' });
-   
-   // 3. Set customer
-   ExotelCallRibbon.setCustomer({ phoneNumber, name, customerId });
-   ```
+**Need help?** Contact us anytime! 📧 contact@intalksai.com
 
 ---
 
-## ✅ **You're Ready to Integrate!**
+## 📄 License
 
-Everything you need is in this document. The widget is deployed, tested, and production-ready in Mumbai region.
+This widget is provided under commercial license.
+Contact us for terms and pricing.
 
-**Start with the demo API key, test the integration, then contact us for your production API key!**
-
----
-
-*Last Updated: October 12, 2025*  
-*Region: Mumbai (ap-south-1)*  
-*Status: Production Ready*  
-*Widget Version: 1.3.0*
-
+© 2024 IntalksAI. All rights reserved.

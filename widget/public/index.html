@@ -63,49 +63,96 @@
             border-color: #ef4444;
         }
         
-        .customer-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
+        .customer-table {
+            width: 100%;
             margin: 30px 0;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
-        .customer-card {
-            background: #f9fafb;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 20px;
+        .customer-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .customer-table th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .customer-table tbody tr {
+            border-bottom: 1px solid #e5e7eb;
             cursor: pointer;
             transition: all 0.2s;
         }
         
-        .customer-card:hover {
-            border-color: #3b82f6;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        .customer-table tbody tr:hover {
+            background: #f9fafb;
+            transform: scale(1.01);
         }
         
-        .customer-card.selected {
-            border-color: #3b82f6;
+        .customer-table tbody tr.selected {
             background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .customer-table td {
+            padding: 15px;
+            font-size: 14px;
         }
         
         .customer-name {
             font-weight: 600;
             color: #1f2937;
-            margin-bottom: 8px;
-            font-size: 16px;
         }
         
         .customer-phone {
             color: #6b7280;
-            font-size: 14px;
-            margin-bottom: 4px;
         }
         
-        .customer-info {
-            color: #9ca3af;
+        .loan-type {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
             font-size: 12px;
+            font-weight: 600;
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .amount {
+            font-weight: 600;
+            color: #dc2626;
+        }
+        
+        .overdue-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .overdue-low {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .overdue-medium {
+            background: #fed7aa;
+            color: #9a3412;
+        }
+        
+        .overdue-high {
+            background: #fecaca;
+            color: #991b1b;
         }
         
         .instructions {
@@ -166,46 +213,71 @@
             <strong>Status:</strong> <span id="status-text">Loading widget...</span>
         </div>
         
-        <h2>👥 Test Customers</h2>
-        <p>Click on any customer to load their details into the ribbon:</p>
+        <h2>📊 Collections Dashboard - Overdue Accounts</h2>
+        <p>Click on any customer row to initiate call:</p>
         
-        <div class="customer-list">
-            <div class="customer-card" onclick="selectCustomer('John Doe', '+919876543210', 'customer-001')">
-                <div class="customer-name">👨‍💼 John Doe</div>
-                <div class="customer-phone">📞 +91 987 654 3210</div>
-                <div class="customer-info">💰 Outstanding: $5,000 | 15 days overdue</div>
-            </div>
-            
-            <div class="customer-card" onclick="selectCustomer('Jane Smith', '+918765432109', 'customer-002')">
-                <div class="customer-name">👩‍💼 Jane Smith</div>
-                <div class="customer-phone">📞 +91 876 543 2109</div>
-                <div class="customer-info">🎯 Lead: Premium Plan | Hot prospect</div>
-            </div>
-            
-            <div class="customer-card" onclick="selectCustomer('Bob Johnson', '+917654321098', 'customer-003')">
-                <div class="customer-name">👨‍💻 Bob Johnson</div>
-                <div class="customer-phone">📞 +91 765 432 1098</div>
-                <div class="customer-info">🎫 Ticket #1234: Login Issue | High priority</div>
-            </div>
-            
-            <div class="customer-card" onclick="selectCustomer('Alice Williams', '+919988776655', 'customer-004')">
-                <div class="customer-name">👩‍🔬 Alice Williams</div>
-                <div class="customer-phone">📞 +91 998 877 6655</div>
-                <div class="customer-info">💼 Enterprise Client | Annual contract</div>
-            </div>
-            
-            <div class="customer-card" onclick="selectCustomer('Charlie Brown', '+918877665544', 'customer-005')">
-                <div class="customer-name">👨‍🎨 Charlie Brown</div>
-                <div class="customer-phone">📞 +91 887 766 5544</div>
-                <div class="customer-info">🔥 Hot Lead | Requested demo yesterday</div>
-            </div>
-            
-            <div class="customer-card" onclick="selectCustomer('Diana Prince', '+917766554433', 'customer-006')">
-                <div class="customer-name">👩‍⚖️ Diana Prince</div>
-                <div class="customer-phone">📞 +91 776 655 4433</div>
-                <div class="customer-info">⭐ VIP Customer | Lifetime value: $50K</div>
-            </div>
-        </div>
+        <table class="customer-table">
+            <thead>
+                <tr>
+                    <th>Loan ID</th>
+                    <th>Customer Name</th>
+                    <th>Phone Number</th>
+                    <th>Loan Type</th>
+                    <th>Outstanding Amount</th>
+                    <th>Days Overdue</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr onclick="selectCustomer('Rajesh Kumar', '+919876543210', 'LOAN001', this)">
+                    <td><strong>LOAN001</strong></td>
+                    <td><span class="customer-name">👨‍💼 Rajesh Kumar</span></td>
+                    <td><span class="customer-phone">+91 987 654 3210</span></td>
+                    <td><span class="loan-type">Business Loan</span></td>
+                    <td><span class="amount">₹1,50,000</span></td>
+                    <td><span class="overdue-badge overdue-medium">45 days</span></td>
+                </tr>
+                <tr onclick="selectCustomer('Priya Sharma', '+918765432109', 'LOAN002', this)">
+                    <td><strong>LOAN002</strong></td>
+                    <td><span class="customer-name">👩‍💼 Priya Sharma</span></td>
+                    <td><span class="customer-phone">+91 876 543 2109</span></td>
+                    <td><span class="loan-type">Personal Loan</span></td>
+                    <td><span class="amount">₹75,000</span></td>
+                    <td><span class="overdue-badge overdue-medium">30 days</span></td>
+                </tr>
+                <tr onclick="selectCustomer('Venkatesh Iyer', '+917654321098', 'LOAN003', this)">
+                    <td><strong>LOAN003</strong></td>
+                    <td><span class="customer-name">👨‍💻 Venkatesh Iyer</span></td>
+                    <td><span class="customer-phone">+91 765 432 1098</span></td>
+                    <td><span class="loan-type">Home Loan EMI</span></td>
+                    <td><span class="amount">₹2,50,000</span></td>
+                    <td><span class="overdue-badge overdue-high">60 days</span></td>
+                </tr>
+                <tr onclick="selectCustomer('Lakshmi Sundaram', '+919988776655', 'LOAN004', this)">
+                    <td><strong>LOAN004</strong></td>
+                    <td><span class="customer-name">👩‍🔬 Lakshmi Sundaram</span></td>
+                    <td><span class="customer-phone">+91 998 877 6655</span></td>
+                    <td><span class="loan-type">Gold Loan</span></td>
+                    <td><span class="amount">₹50,000</span></td>
+                    <td><span class="overdue-badge overdue-low">15 days</span></td>
+                </tr>
+                <tr onclick="selectCustomer('Murugan Rajan', '+918877665544', 'LOAN005', this)">
+                    <td><strong>LOAN005</strong></td>
+                    <td><span class="customer-name">👨‍🎨 Murugan Rajan</span></td>
+                    <td><span class="customer-phone">+91 887 766 5544</span></td>
+                    <td><span class="loan-type">Vehicle Loan</span></td>
+                    <td><span class="amount">₹1,25,000</span></td>
+                    <td><span class="overdue-badge overdue-high">90 days</span></td>
+                </tr>
+                <tr onclick="selectCustomer('Meena Krishnan', '+917766554433', 'LOAN006', this)">
+                    <td><strong>LOAN006</strong></td>
+                    <td><span class="customer-name">👩‍⚖️ Meena Krishnan</span></td>
+                    <td><span class="customer-phone">+91 776 655 4433</span></td>
+                    <td><span class="loan-type">Credit Card</span></td>
+                    <td><span class="amount">₹35,000</span></td>
+                    <td><span class="overdue-badge overdue-low">20 days</span></td>
+                </tr>
+            </tbody>
+        </table>
         
         
     </div>
@@ -252,12 +324,12 @@
         }, 1500);
         
         // Select customer function
-        function selectCustomer(name, phone, customerId) {
-            // Highlight selected card
-            document.querySelectorAll('.customer-card').forEach(card => {
-                card.classList.remove('selected');
+        function selectCustomer(name, phone, customerId, row) {
+            // Highlight selected row
+            document.querySelectorAll('.customer-table tbody tr').forEach(tr => {
+                tr.classList.remove('selected');
             });
-            event.currentTarget.classList.add('selected');
+            row.classList.add('selected');
             
             // Update ribbon with customer data
             try {
@@ -273,7 +345,7 @@
                 
                 // Update status
                 document.getElementById('status').className = 'status';
-                document.getElementById('status-text').textContent = `Ready to call ${name}`;
+                document.getElementById('status-text').textContent = `Ready to call ${name} - ${customerId}`;
             } catch (error) {
                 console.error(`❌ Error: ${error.message}`);
             }

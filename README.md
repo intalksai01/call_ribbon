@@ -1,275 +1,344 @@
-# 🎯 Exotel Call Control Ribbon
+# 📞 IntalksAI Call Ribbon
 
-A **production-ready, embeddable call control widget** that can be integrated into any CRM application with just 3 lines of code.
+> Embeddable call control widget for CRM applications powered by Exotel
 
-Perfect for Collections CRMs, Marketing CRMs, Support Systems, and any application that needs telephony integration.
-
----
-
-## 🌟 Features
-
-- **📞 Full Call Control** - Make/receive calls, mute, hold, hangup, DTMF
-- **🎨 Flexible Positioning** - Top, bottom, or floating layout
-- **🔌 Plug & Play** - 3-line integration for any website
-- **🔐 Secure** - API key authentication, domain whitelisting
-- **📊 Analytics** - Built-in call logging and usage tracking
-- **🌍 Framework Agnostic** - Works with React, Angular, Vue, or plain HTML
-- **📱 Responsive** - Mobile and desktop support
-- **⚡ Real-time** - Powered by Exotel's WebRTC technology
+[![Status](https://img.shields.io/badge/status-production-brightgreen)]()
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)]()
+[![Region](https://img.shields.io/badge/region-Mumbai_(ap--south--1)-orange)]()
 
 ---
 
-## 📁 Project Structure
+## 🎯 What is Call Ribbon?
 
-```
-exotel-call-ribbon/
-├── widget/                 # Call control widget (client-facing)
-│   ├── src/               # Source files
-│   ├── dist/              # Built files (for CDN)
-│   └── package.json
-├── api/                   # Backend API server (your infrastructure)
-│   ├── server.js          # Main API server
-│   ├── package.json
-│   └── .env.example
-├── docs/                  # Documentation
-│   ├── DEPLOYMENT.md      # Your deployment guide
-│   └── CLIENT_GUIDE.md    # Client integration guide
-├── examples/              # Integration examples
-│   ├── html-example.html
-│   ├── react-example.jsx
-│   └── angular-example.ts
-└── README.md             # This file
+IntalksAI Call Ribbon is a plug-and-play widget that adds professional calling capabilities to any web application. Perfect for CRMs, helpdesks, and customer management systems.
+
+### Key Features:
+- ✅ **One-line integration** - Add to any webpage
+- ✅ **Automatic call analytics** - Track every call with rich context
+- ✅ **No credential management** - We handle Exotel tokens securely
+- ✅ **Flexible context tracking** - Send any business data you need
+- ✅ **Professional UI** - Modern, draggable call controls
+- ✅ **Mobile responsive** - Works on all devices
+
+---
+
+## 🚀 Quick Start (3 Minutes)
+
+### 1. Include the Widget
+
+```html
+<script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.3b847e89.js"></script>
 ```
 
----
+### 2. Initialize
 
-## 🚀 Quick Links
-
-### **For You (Provider):**
-- [📖 Deployment Guide](docs/DEPLOYMENT.md) - How to deploy and manage the ribbon
-- [⚙️ API Server Setup](api/README.md) - Backend API configuration
-- [🔧 Build Instructions](widget/README.md) - Widget build process
-
-### **For Your Clients:**
-- [📋 Client Integration Guide](docs/CLIENT_GUIDE.md) - Simple 3-step integration
-- [💡 Examples](examples/) - Integration examples for different frameworks
-- [🆘 Troubleshooting](docs/CLIENT_GUIDE.md#troubleshooting) - Common issues and solutions
-
----
-
-## 🎯 How It Works
-
-```
-┌─────────────────────┐
-│  Client's CRM       │
-│  (Any Framework)    │
-│  <script src="..."> │ ← 3 lines of code
-└──────────┬──────────┘
-           │
-           ↓
-┌─────────────────────┐
-│  Your CDN           │
-│  (S3/CloudFront)    │
-│  - ribbon.js        │
-│  - ribbon.css       │
-└──────────┬──────────┘
-           │
-           ↓
-┌─────────────────────┐
-│  Your API Server    │
-│  - Auth & Billing   │
-│  - Exotel Creds     │
-└──────────┬──────────┘
-           │
-           ↓
-┌─────────────────────┐
-│  Exotel Platform    │
-│  - WebRTC Calls     │
-└─────────────────────┘
+```javascript
+ExotelCallRibbon.init({
+  apiKey: 'your-api-key',
+  apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
+  position: 'bottom'
+});
 ```
 
----
+### 3. Set Customer & Call
 
-## 💼 Business Model
+```javascript
+ExotelCallRibbon.setCustomer({
+  phoneNumber: '+919876543210',
+  name: 'Rajesh Kumar',
+  customerId: 'LOAN001',
+  context: {
+    loanType: 'Business Loan',
+    outstandingBalance: 150000
+  }
+});
+```
 
-### **Pricing Tiers:**
-
-| Plan | Calls/Month | Features | Price |
-|------|-------------|----------|-------|
-| **Trial** | 100 | Basic calling | Free |
-| **Professional** | 5,000 | + DTMF, Analytics | $99/mo |
-| **Enterprise** | 10,000 | + Transfer, Priority Support | $299/mo |
-| **Custom** | Unlimited | Custom features | Contact Us |
-
-### **Target Customers:**
-
-- 💰 **Collections CRM** - Call customers with overdue payments
-- 📈 **Marketing/Sales CRM** - Follow up with leads
-- 🎧 **Support CRM** - Handle customer tickets
-- 🏠 **Real Estate CRM** - Contact property leads
-- 🏥 **Healthcare** - Patient follow-ups
-- 📚 **Education** - Student/parent communication
+**Done! You now have integrated calling.** 🎉
 
 ---
 
-## 🚀 Getting Started
+## 📊 Live Demo
 
-### **For Providers (You):**
+**Try it now:** https://d2t5fsybshqnye.cloudfront.net
 
-1. **Clone this repository**
-   ```bash
-   git clone https://github.com/yourcompany/exotel-call-ribbon.git
-   cd exotel-call-ribbon
-   ```
-
-2. **Read the deployment guide**
-   ```bash
-   open docs/DEPLOYMENT.md
-   ```
-
-3. **Build and deploy**
-   ```bash
-   cd widget
-   npm install
-   npm run build
-   # Follow deployment guide to host on CDN
-   ```
-
-4. **Start API server**
-   ```bash
-   cd api
-   npm install
-   node server.js
-   ```
-
-### **For Clients:**
-
-See [Client Integration Guide](docs/CLIENT_GUIDE.md) for the simple 3-step integration process.
+**Test API Key:** `demo-api-key-789`
 
 ---
 
-## 📊 What's Included
+## 💡 Use Cases
 
-### **1. Widget Component**
-- Full-featured call control UI
-- Customizable positioning and styling
-- Event callbacks for CRM integration
-- Mobile responsive design
+### Collections CRM
+Track loan accounts, overdue amounts, payment promises:
+```javascript
+context: {
+  loanType: 'Business Loan',
+  outstandingBalance: 150000,
+  daysOverdue: 45,
+  emiAmount: 15000
+}
+```
 
-### **2. API Server**
-- Client authentication via API keys
-- Secure credential management
-- Usage tracking and billing
-- Call logging and analytics
+### Sales CRM
+Track leads, deal value, conversion stages:
+```javascript
+context: {
+  leadSource: 'Website',
+  productInterest: 'Premium Plan',
+  expectedValue: 75000,
+  leadScore: 85
+}
+```
 
-### **3. Documentation**
-- Complete deployment guide
-- Client integration tutorials
-- API reference
-- Framework-specific examples
-
-### **4. Examples**
-- Plain HTML integration
-- React integration
-- Angular integration
-- Vue integration
-
----
-
-## 🔐 Security
-
-- ✅ **API Key Authentication** - Each client has unique credentials
-- ✅ **Domain Whitelisting** - Control where the widget can be used
-- ✅ **Credential Protection** - Exotel tokens never exposed to browsers
-- ✅ **Rate Limiting** - Prevent abuse and track usage
-- ✅ **HTTPS Only** - Enforce secure connections
-- ✅ **Audit Logging** - Complete call history and analytics
+### Support CRM
+Track tickets, issue types, resolution times:
+```javascript
+context: {
+  ticketId: 'SUPPORT-1234',
+  issueType: 'Technical',
+  severity: 'High'
+}
+```
 
 ---
 
-## 📈 Scalability
+## 📚 Documentation
 
-Built to handle:
-- **1000+** concurrent clients
-- **100+** calls per second
-- **Global CDN** for low latency worldwide
-- **Horizontal scaling** for API servers
+### For Developers:
+- **[CRM Integration Guide](docs/CRM_INTEGRATION_FINAL.md)** - Complete integration examples
+- **[API Guide](docs/CLIENT_API_GUIDE.md)** - All API endpoints
+- **[Quick Reference](docs/QUICK_REFERENCE.md)** - Cheat sheet
+
+### For DevOps:
+- **[Getting Started](GETTING_STARTED.md)** - Setup instructions
+- **[Deployment Guide](docs/DEPLOYMENT.md)** - AWS deployment
+
+### For Database:
+- **[Database Overview](database/README.md)** - Schema & setup
+- **[Schema Comparison](database/SCHEMA_COMPARISON.md)** - Design decisions
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────┐
+│  Your CRM Application                       │
+│  (Sends: customer context + metadata)       │
+└────────────────┬────────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────────┐
+│  Call Ribbon Widget (Frontend)              │
+│  CloudFront + S3 (Mumbai)                   │
+│  Status: ✅ LIVE                            │
+└────────────────┬────────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────────┐
+│  Backend API (Elastic Beanstalk)            │
+│  - Authenticates with API key               │
+│  - Manages Exotel credentials               │
+│  - Logs calls with context                  │
+│  Status: ✅ LIVE                            │
+└────────────────┬────────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────────┐
+│  PostgreSQL Database (RDS)                  │
+│  - 6 tables (simplified schema)             │
+│  - Call history + context                   │
+│  - Analytics data                           │
+│  Status: ✅ LIVE                            │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+## 🗄️ Database Schema (Simplified)
+
+We use a **lean, focused schema** - 6 tables:
+
+1. **clients** - Your account info
+2. **call_sessions** - Every call with context ⭐
+3. **call_events** - Detailed event log
+4. **call_notes** - Agent notes
+5. **usage_tracking** - Billing data
+6. **api_logs** - Debugging
+
+**Philosophy:** *"We own the call, not the customer"*
+
+See [Schema Comparison](database/SCHEMA_COMPARISON.md) for details.
+
+---
+
+## 📡 API Endpoints
+
+### Client Endpoints
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/ribbon/init` | POST | Get credentials |
+| `/api/ribbon/config` | GET | Get configuration |
+| `/api/ribbon/call-logs` | GET | Get call history |
+| `/api/ribbon/customer/:id/calls` | GET | Customer call history |
+| `/api/ribbon/analytics` | GET | Basic analytics |
+| `/api/ribbon/analytics/detailed` | GET | Detailed analytics |
+| `/api/ribbon/export/calls` | GET | Export to CSV/JSON |
+| `/api/ribbon/active-calls` | GET | Active calls |
+
+### Admin Endpoints
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/admin/clients` | GET | List all clients |
+| `/api/admin/analytics/all` | GET | All clients analytics |
+
+Full API docs: [CLIENT_API_GUIDE.md](docs/CLIENT_API_GUIDE.md)
+
+---
+
+## 🔑 API Keys
+
+Contact us to get your API key: **contact@intalksai.com**
+
+**Test Key (Available Now):**
+```
+API Key: demo-api-key-789
+Limit: 100 calls/month
+```
+
+---
+
+## 💰 Pricing
+
+| Plan | Monthly Calls | Price | Features |
+|------|--------------|-------|----------|
+| Trial | 100 | Free | Basic calling |
+| Starter | 1,000 | ₹2,999/mo | + Analytics |
+| Professional | 5,000 | ₹9,999/mo | + API access |
+| Enterprise | 20,000+ | Custom | + Dedicated support |
+
+---
+
+## 🌐 Production URLs
+
+- **Widget CDN:** https://d2t5fsybshqnye.cloudfront.net
+- **API Server:** http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com
+- **Region:** Asia Pacific (Mumbai) - ap-south-1
 
 ---
 
 ## 🛠️ Technology Stack
 
-### **Frontend (Widget)**
+### Frontend
 - React 18
-- Exotel WebRTC SDK
-- CSS3 with animations
-- Webpack/Rollup for bundling
+- Modern ES6+ JavaScript
+- Responsive CSS
+- CloudFront + S3
 
-### **Backend (API)**
+### Backend
 - Node.js + Express
-- PostgreSQL/MongoDB for data storage
-- Redis for caching
-- JWT for authentication
+- PostgreSQL (RDS)
+- Elastic Beanstalk
+- Mumbai region (low latency)
 
-### **Infrastructure**
-- AWS S3 + CloudFront (CDN)
-- AWS EC2/ECS or Heroku (API)
-- AWS RDS (Database)
-- Datadog/New Relic (Monitoring)
+---
+
+## 📦 Project Structure
+
+```
+exotel-call-ribbon/
+├── README.md                    # This file
+├── GETTING_STARTED.md          # Setup guide
+│
+├── widget/                     # Frontend widget
+│   ├── src/
+│   │   ├── CallControlRibbon.jsx
+│   │   ├── CallControlRibbon.css
+│   │   └── widget-entry.js
+│   └── public/
+│       └── index.html          # Demo page
+│
+├── api/                        # Backend API
+│   ├── server.js              # Express server
+│   ├── database.js            # PostgreSQL module
+│   └── package.json
+│
+├── database/                   # Database
+│   ├── README.md
+│   ├── schema-simplified.sql  # Current schema
+│   └── init-simplified-test-data.sql
+│
+└── docs/                       # Documentation
+    ├── CRM_INTEGRATION_FINAL.md
+    ├── CLIENT_API_GUIDE.md
+    ├── QUICK_REFERENCE.md
+    └── DEPLOYMENT.md
+```
+
+---
+
+## 🚀 Deployment
+
+### Frontend (CloudFront + S3)
+```bash
+cd widget
+npm run build
+aws s3 sync build/ s3://your-bucket/ --region ap-south-1
+```
+
+### Backend (Elastic Beanstalk)
+```bash
+cd api
+eb deploy production-mumbai --region ap-south-1
+```
+
+See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for details.
+
+---
+
+## 🧪 Testing
+
+### Run Demo Locally
+
+```bash
+# Frontend
+cd widget
+npm install
+npm start
+
+# Backend
+cd api
+npm install
+npm start
+```
+
+### Test Endpoints
+
+```bash
+cd database
+./test-simplified-endpoints.sh
+```
 
 ---
 
 ## 📞 Support
 
-### **For Providers:**
-- 📧 Email: dev-support@yourcompany.com
-- 💬 Slack: #exotel-ribbon-dev
-- 📖 Docs: Full documentation in `/docs`
-
-### **For Clients:**
-- 📧 Email: support@yourcompany.com
-- 💬 Live Chat: During business hours
-- 📖 Docs: [Client Guide](docs/CLIENT_GUIDE.md)
-- 🎥 Videos: Integration tutorials
-
----
-
-## 🤝 Contributing
-
-This is a commercial product. For feature requests or bug reports, please contact:
-- dev@yourcompany.com
+- 📧 Email: contact@intalksai.com
+- 📚 Documentation: https://docs.callribbon.intalksai.com
+- 💬 Slack: (invite link)
 
 ---
 
 ## 📄 License
 
-Proprietary - All rights reserved.
-For licensing inquiries, contact: sales@yourcompany.com
+Commercial license. Contact us for terms.
 
 ---
 
-## 🎉 Quick Stats
+## 🙏 Credits
 
-- ⚡ **5-minute** client integration
-- 🚀 **99.9%** uptime SLA
-- 📞 **1M+** calls handled monthly
-- 😊 **50+** satisfied clients
-- 🌍 Available in **20+** countries
+Built with ❤️ by IntalksAI
 
----
-
-## 🔗 Links
-
-- 🌐 Website: https://yourcompany.com/call-ribbon
-- 📖 Docs: https://docs.yourcompany.com/ribbon
-- 🎮 Demo: https://demo.yourcompany.com/ribbon
-- 🛒 Pricing: https://yourcompany.com/pricing
-
----
-
-**Ready to launch your call control solution!** 🚀
-
-For deployment instructions, see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
-# call_ribbon
-
-
+© 2024 IntalksAI. All rights reserved.
