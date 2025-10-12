@@ -1,0 +1,71 @@
+PostgreSQL RDS - Mumbai
+========================
+
+Created: Sun Oct 12 13:49:55 EDT 2025
+Region: ap-south-1 (Mumbai)
+Instance ID: intalksai-call-ribbon-db
+
+Connection Details:
+-------------------
+Host: intalksai-call-ribbon-db.cviea4aicss0.ap-south-1.rds.amazonaws.com
+Port: 5432
+Database: call_ribbon_db
+Username: call_ribbon_admin
+Password: 9AYVOZVXas6tiAz3vYAqZM1NS
+
+Connection String (for Node.js):
+---------------------------------
+DATABASE_URL=postgresql://call_ribbon_admin:9AYVOZVXas6tiAz3vYAqZM1NS@intalksai-call-ribbon-db.cviea4aicss0.ap-south-1.rds.amazonaws.com:5432/call_ribbon_db
+
+Connection String (with SSL):
+------------------------------
+DATABASE_URL=postgresql://call_ribbon_admin:9AYVOZVXas6tiAz3vYAqZM1NS@intalksai-call-ribbon-db.cviea4aicss0.ap-south-1.rds.amazonaws.com:5432/call_ribbon_db?sslmode=require
+
+psql Command:
+-------------
+psql -h intalksai-call-ribbon-db.cviea4aicss0.ap-south-1.rds.amazonaws.com -p 5432 -U call_ribbon_admin -d call_ribbon_db
+
+Next Steps:
+-----------
+1. Initialize schema:
+   psql -h intalksai-call-ribbon-db.cviea4aicss0.ap-south-1.rds.amazonaws.com -p 5432 -U call_ribbon_admin -d call_ribbon_db -f schema.sql
+
+2. Update api/.env:
+   DATABASE_URL=postgresql://call_ribbon_admin:9AYVOZVXas6tiAz3vYAqZM1NS@intalksai-call-ribbon-db.cviea4aicss0.ap-south-1.rds.amazonaws.com:5432/call_ribbon_db
+
+3. Install pg module:
+   cd api && npm install pg
+
+4. Update server.js to use PostgreSQL
+
+5. Redeploy API:
+   eb deploy production-mumbai --region ap-south-1
+
+Management:
+-----------
+View logs:
+aws rds describe-db-log-files --db-instance-identifier intalksai-call-ribbon-db --region ap-south-1
+
+Create snapshot:
+aws rds create-db-snapshot --db-instance-identifier intalksai-call-ribbon-db --db-snapshot-identifier intalksai-call-ribbon-db-snapshot-$(date +%Y%m%d) --region ap-south-1
+
+Modify instance:
+aws rds modify-db-instance --db-instance-identifier intalksai-call-ribbon-db --region ap-south-1
+
+Delete (when needed):
+aws rds delete-db-instance --db-instance-identifier intalksai-call-ribbon-db --skip-final-snapshot --region ap-south-1
+
+Security:
+---------
+⚠️  Database is publicly accessible for easy setup
+✅ Restrict security group in production
+✅ Use SSL connections
+✅ Rotate password regularly
+✅ Enable automated backups (configured: 7 days)
+
+Cost Estimate:
+--------------
+db.t3.micro: ~5/month
+20GB storage: ~.30/month
+Backup storage: ~./setup-rds-mumbai.sh.10/GB/month
+Total: ~8-20/month
