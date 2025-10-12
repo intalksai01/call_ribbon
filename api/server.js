@@ -10,8 +10,10 @@
  * - Usage tracking for billing
  */
 
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const db = require('./database'); // PostgreSQL database module
 const app = express();
 
 // Middleware
@@ -82,52 +84,62 @@ const callSessions = {};
 /**
  * Initialize Ribbon - Get Exotel credentials
  */
-app.post('/api/ribbon/init', (req, res) => {
+app.post('/api/ribbon/init', async (req, res) => {
   const { apiKey, domain } = req.body;
 
   console.log(`[API] Init request from domain: ${domain}, apiKey: ${apiKey?.substring(0, 10)}...`);
 
-  // Validate API key
-  const client = clients[apiKey];
-  if (!client) {
-    console.log('[API] Invalid API key');
-    return res.status(401).json({ 
-      error: 'Invalid API key',
-      message: 'Please check your API key or contact support'
-    });
-  }
-
-  // Check domain (skip for '*')
-  if (!client.allowedDomains.includes('*') && !client.allowedDomains.includes(domain)) {
-    console.log(`[API] Domain not allowed: ${domain}`);
-    return res.status(403).json({ 
-      error: 'Domain not allowed',
-      message: `This API key is not authorized for domain: ${domain}`
-    });
-  }
-
-  // Check usage limits
-  if (client.callsThisMonth >= client.monthlyCallLimit) {
-    console.log('[API] Monthly limit exceeded');
-    return res.status(429).json({ 
-      error: 'Usage limit exceeded',
-      message: 'Monthly call limit reached. Please upgrade your plan.'
-    });
-  }
-
-  console.log(`[API] Credentials provided for client: ${client.name}`);
-
-  // Return credentials and configuration
-  res.json({
-    exotelToken: client.exotelToken,
-    userId: client.exotelUserId,
-    features: client.features,
-    clientInfo: {
-      name: client.name,
-      plan: client.plan,
-      remainingCalls: client.monthlyCallLimit - client.callsThisMonth
+  try {
+    // Get client from database
+    const client = await db.clients.getByApiKey(apiKey);
+    
+    if (!client) {
+      console.log('[API] Invalid API key');
+      return res.status(401).json({ 
+        error: 'Invalid API key',
+        message: 'Please check your API key or contact support'
+      });
     }
-  });
+
+    // Check domain (skip for '*')
+    const allowedDomains = client.allowed_domains || [];
+    if (!allowedDomains.includes('*') && !allowedDomains.includes(domain)) {
+      console.log(`[API] Domain not allowed: ${domain}`);
+      return res.status(403).json({ 
+        error: 'Domain not allowed',
+        message: `This API key is not authorized for domain: ${domain}`
+      });
+    }
+
+    // Check usage limits
+    if (client.calls_this_month >= client.monthly_call_limit) {
+      console.log('[API] Monthly limit exceeded');
+      return res.status(429).json({ 
+        error: 'Usage limit exceeded',
+        message: 'Monthly call limit reached. Please upgrade your plan.'
+      });
+    }
+
+    console.log(`[API] Credentials provided for client: ${client.client_name}`);
+
+    // Return credentials and configuration
+    res.json({
+      exotelToken: client.exotel_token,
+      userId: client.exotel_user_id,
+      features: client.features,
+      clientInfo: {
+        name: client.client_name,
+        plan: client.plan_type,
+        remainingCalls: client.monthly_call_limit - client.calls_this_month
+      }
+    });
+  } catch (error) {
+    console.error('[API] Init error:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message
+    });
+  }
 });
 
 /**
@@ -195,89 +207,80 @@ app.post('/api/ribbon/log-call', (req, res) => {
 /**
  * Get Client Configuration
  */
-app.get('/api/ribbon/config', (req, res) => {
+app.get('/api/ribbon/config', async (req, res) => {
   const apiKey = req.headers['x-api-key'];
 
-  const client = clients[apiKey];
-  if (!client) {
-    return res.status(401).json({ error: 'Invalid API key' });
-  }
-
-  res.json({
-    features: client.features,
-    plan: client.plan,
-    usage: {
-      callsThisMonth: client.callsThisMonth,
-      limit: client.monthlyCallLimit,
-      remaining: client.monthlyCallLimit - client.callsThisMonth
+  try {
+    const client = await db.clients.getByApiKey(apiKey);
+    
+    if (!client) {
+      return res.status(401).json({ error: 'Invalid API key' });
     }
-  });
+
+    res.json({
+      features: client.features,
+      plan: client.plan_type,
+      usage: {
+        callsThisMonth: client.calls_this_month,
+        limit: client.monthly_call_limit,
+        remaining: client.monthly_call_limit - client.calls_this_month
+      }
+    });
+  } catch (error) {
+    console.error('[API] Config error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
 });
 
 /**
  * Get Call Analytics (Admin/Client Dashboard)
  */
-app.get('/api/ribbon/analytics', (req, res) => {
+app.get('/api/ribbon/analytics', async (req, res) => {
   const apiKey = req.headers['x-api-key'];
   const { startDate, endDate, customerId, limit = 100 } = req.query;
 
-  const client = clients[apiKey];
-  if (!client) {
-    return res.status(401).json({ error: 'Invalid API key' });
-  }
-
-  // Filter logs for this client
-  let clientLogs = callLogs.filter(log => log.clientId === client.clientId);
-
-  // Apply date filters
-  if (startDate) {
-    clientLogs = clientLogs.filter(log => new Date(log.timestamp) >= new Date(startDate));
-  }
-  if (endDate) {
-    clientLogs = clientLogs.filter(log => new Date(log.timestamp) <= new Date(endDate));
-  }
-
-  // Apply customer filter
-  if (customerId) {
-    clientLogs = clientLogs.filter(log => log.data?.customerData?.customerId === customerId);
-  }
-
-  // Get completed call sessions for this client
-  const completedSessions = Object.values(callSessions).filter(
-    session => session.clientId === client.clientId && session.status === 'completed'
-  );
-
-  // Calculate total duration
-  const totalDuration = completedSessions.reduce((sum, session) => sum + (session.duration || 0), 0);
-
-  // Calculate average duration
-  const avgDuration = completedSessions.length > 0 ? Math.round(totalDuration / completedSessions.length) : 0;
-
-  // Group calls by date
-  const callsByDate = {};
-  clientLogs.filter(log => log.event === 'connected').forEach(log => {
-    const date = log.timestamp.split('T')[0];
-    callsByDate[date] = (callsByDate[date] || 0) + 1;
-  });
-
-  // Calculate statistics
-  const stats = {
-    totalCalls: clientLogs.filter(log => log.event === 'connected').length,
-    totalDuration,
-    avgDuration,
-    incomingCalls: clientLogs.filter(log => log.event === 'incoming').length,
-    outgoingCalls: clientLogs.filter(log => log.event === 'connected' && log.data?.callDirection === 'outbound').length,
-    missedCalls: clientLogs.filter(log => log.event === 'callEnded' && log.data?.duration === 0).length,
-    callsByDate,
-    recentCalls: completedSessions.slice(-parseInt(limit)).reverse(),
-    usage: {
-      callsThisMonth: client.callsThisMonth,
-      limit: client.monthlyCallLimit,
-      remaining: client.monthlyCallLimit - client.callsThisMonth
+  try {
+    const client = await db.clients.getByApiKey(apiKey);
+    
+    if (!client) {
+      return res.status(401).json({ error: 'Invalid API key' });
     }
-  };
 
-  res.json(stats);
+    // Get call history from database
+    const filters = { startDate, endDate, customerId, limit: parseInt(limit) };
+    const callHistory = await db.callSessions.getHistory(client.client_id, filters);
+
+    // Get basic stats
+    const stats = await db.analytics.getBasicStats(client.client_id, startDate, endDate);
+
+    // Group calls by date
+    const callsByDate = {};
+    callHistory.filter(call => call.call_status === 'completed').forEach(call => {
+      const date = call.initiated_at.toISOString().split('T')[0];
+      callsByDate[date] = (callsByDate[date] || 0) + 1;
+    });
+
+    res.json({
+      summary: {
+        totalCalls: parseInt(stats.total_calls) || 0,
+        totalDuration: parseInt(stats.total_duration) || 0,
+        avgDuration: parseInt(stats.avg_duration) || 0,
+        inboundCalls: parseInt(stats.inbound_calls) || 0,
+        outboundCalls: parseInt(stats.outbound_calls) || 0,
+        missedCalls: parseInt(stats.missed_calls) || 0
+      },
+      callsByDate,
+      recentCalls: callHistory.slice(0, parseInt(limit)),
+      usage: {
+        callsThisMonth: client.calls_this_month,
+        limit: client.monthly_call_limit,
+        remaining: client.monthly_call_limit - client.calls_this_month
+      }
+    });
+  } catch (error) {
+    console.error('[API] Analytics error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
 });
 
 /**
@@ -294,393 +297,346 @@ app.get('/health', (req, res) => {
 /**
  * Save/Update Customer Information
  */
-app.post('/api/ribbon/customer', (req, res) => {
+app.post('/api/ribbon/customer', async (req, res) => {
   const { apiKey, customerData } = req.body;
 
-  const client = clients[apiKey];
-  if (!client) {
-    return res.status(401).json({ error: 'Invalid API key' });
+  try {
+    const client = await db.clients.getByApiKey(apiKey);
+    
+    if (!client) {
+      return res.status(401).json({ error: 'Invalid API key' });
+    }
+
+    // Save customer to database
+    const savedCustomer = await db.customers.upsert(client.client_id, customerData);
+
+    console.log(`[API] Customer saved: ${customerData.name} for ${client.client_name}`);
+
+    res.json({
+      success: true,
+      customerId: savedCustomer.external_customer_id,
+      message: 'Customer information saved'
+    });
+  } catch (error) {
+    console.error('[API] Save customer error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
   }
-
-  const customerId = customerData.customerId || `cust-${Date.now()}`;
-  const customerKey = `${client.clientId}-${customerId}`;
-
-  // Store/update customer info
-  customers[customerKey] = {
-    customerId,
-    clientId: client.clientId,
-    ...customerData,
-    lastUpdated: new Date().toISOString(),
-    createdAt: customers[customerKey]?.createdAt || new Date().toISOString()
-  };
-
-  console.log(`[API] Customer saved: ${customerData.name} for ${client.name}`);
-
-  res.json({
-    success: true,
-    customerId,
-    message: 'Customer information saved'
-  });
 });
 
 /**
  * Get Customer Information
  */
-app.get('/api/ribbon/customer/:customerId', (req, res) => {
+app.get('/api/ribbon/customer/:customerId', async (req, res) => {
   const apiKey = req.headers['x-api-key'];
   const { customerId } = req.params;
 
-  const client = clients[apiKey];
-  if (!client) {
-    return res.status(401).json({ error: 'Invalid API key' });
+  try {
+    const client = await db.clients.getByApiKey(apiKey);
+    
+    if (!client) {
+      return res.status(401).json({ error: 'Invalid API key' });
+    }
+
+    // Get customer from database
+    const customer = await db.customers.getById(client.client_id, customerId);
+
+    if (!customer) {
+      return res.status(404).json({ error: 'Customer not found' });
+    }
+
+    // Get call history for this customer
+    const customerCalls = await db.callSessions.getCustomerCalls(client.client_id, customerId, 50);
+
+    res.json({
+      customer,
+      callHistory: customerCalls,
+      totalCalls: customerCalls.length,
+      totalDuration: customerCalls.reduce((sum, call) => sum + (parseInt(call.duration) || 0), 0)
+    });
+  } catch (error) {
+    console.error('[API] Get customer error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
   }
-
-  const customerKey = `${client.clientId}-${customerId}`;
-  const customer = customers[customerKey];
-
-  if (!customer) {
-    return res.status(404).json({ error: 'Customer not found' });
-  }
-
-  // Get call history for this customer
-  const customerCalls = Object.values(callSessions).filter(
-    session => session.clientId === client.clientId && 
-               session.customerData?.customerId === customerId
-  );
-
-  res.json({
-    customer,
-    callHistory: customerCalls,
-    totalCalls: customerCalls.length,
-    totalDuration: customerCalls.reduce((sum, call) => sum + (call.duration || 0), 0)
-  });
 });
 
 /**
  * Get All Call Logs with Filters
  */
-app.get('/api/ribbon/call-logs', (req, res) => {
+app.get('/api/ribbon/call-logs', async (req, res) => {
   const apiKey = req.headers['x-api-key'];
   const { 
     startDate, 
     endDate, 
     customerId, 
-    event, 
     callDirection,
     page = 1, 
     pageSize = 50 
   } = req.query;
 
-  const client = clients[apiKey];
-  if (!client) {
-    return res.status(401).json({ error: 'Invalid API key' });
-  }
-
-  // Filter logs
-  let filteredLogs = callLogs.filter(log => log.clientId === client.clientId);
-
-  if (startDate) {
-    filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) >= new Date(startDate));
-  }
-  if (endDate) {
-    filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) <= new Date(endDate));
-  }
-  if (customerId) {
-    filteredLogs = filteredLogs.filter(log => log.data?.customerData?.customerId === customerId);
-  }
-  if (event) {
-    filteredLogs = filteredLogs.filter(log => log.event === event);
-  }
-  if (callDirection) {
-    filteredLogs = filteredLogs.filter(log => log.data?.callDirection === callDirection);
-  }
-
-  // Pagination
-  const total = filteredLogs.length;
-  const start = (parseInt(page) - 1) * parseInt(pageSize);
-  const end = start + parseInt(pageSize);
-  const paginatedLogs = filteredLogs.slice(start, end);
-
-  res.json({
-    logs: paginatedLogs,
-    pagination: {
-      page: parseInt(page),
-      pageSize: parseInt(pageSize),
-      total,
-      totalPages: Math.ceil(total / parseInt(pageSize))
+  try {
+    const client = await db.clients.getByApiKey(apiKey);
+    
+    if (!client) {
+      return res.status(401).json({ error: 'Invalid API key' });
     }
-  });
+
+    // Build filters
+    const filters = {
+      startDate,
+      endDate,
+      customerId,
+      callDirection,
+      limit: parseInt(pageSize),
+      offset: (parseInt(page) - 1) * parseInt(pageSize)
+    };
+
+    // Get logs from database
+    const logs = await db.callSessions.getHistory(client.client_id, filters);
+
+    // Get total count (without limit)
+    const totalFilters = { startDate, endDate, customerId, callDirection };
+    const allLogs = await db.callSessions.getHistory(client.client_id, totalFilters);
+    const total = allLogs.length;
+
+    res.json({
+      logs,
+      pagination: {
+        page: parseInt(page),
+        pageSize: parseInt(pageSize),
+        total,
+        totalPages: Math.ceil(total / parseInt(pageSize))
+      }
+    });
+  } catch (error) {
+    console.error('[API] Call logs error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
 });
 
 /**
  * Get Active Call Sessions
  */
-app.get('/api/ribbon/active-calls', (req, res) => {
+app.get('/api/ribbon/active-calls', async (req, res) => {
   const apiKey = req.headers['x-api-key'];
 
-  const client = clients[apiKey];
-  if (!client) {
-    return res.status(401).json({ error: 'Invalid API key' });
+  try {
+    const client = await db.clients.getByApiKey(apiKey);
+    
+    if (!client) {
+      return res.status(401).json({ error: 'Invalid API key' });
+    }
+
+    const activeCalls = await db.callSessions.getActive(client.client_id);
+
+    res.json({
+      activeCalls,
+      count: activeCalls.length
+    });
+  } catch (error) {
+    console.error('[API] Active calls error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
   }
-
-  const activeCalls = Object.values(callSessions).filter(
-    session => session.clientId === client.clientId && session.status === 'active'
-  );
-
-  res.json({
-    activeCalls,
-    count: activeCalls.length
-  });
 });
 
 /**
  * Get Detailed Analytics Report
  */
-app.get('/api/ribbon/analytics/detailed', (req, res) => {
+app.get('/api/ribbon/analytics/detailed', async (req, res) => {
   const apiKey = req.headers['x-api-key'];
   const { startDate, endDate } = req.query;
 
-  const client = clients[apiKey];
-  if (!client) {
-    return res.status(401).json({ error: 'Invalid API key' });
-  }
-
-  // Filter logs
-  let clientLogs = callLogs.filter(log => log.clientId === client.clientId);
-  let clientSessions = Object.values(callSessions).filter(s => s.clientId === client.clientId);
-
-  if (startDate) {
-    clientLogs = clientLogs.filter(log => new Date(log.timestamp) >= new Date(startDate));
-    clientSessions = clientSessions.filter(s => new Date(s.startTime) >= new Date(startDate));
-  }
-  if (endDate) {
-    clientLogs = clientLogs.filter(log => new Date(log.timestamp) <= new Date(endDate));
-    clientSessions = clientSessions.filter(s => new Date(s.startTime) <= new Date(endDate));
-  }
-
-  const completedSessions = clientSessions.filter(s => s.status === 'completed');
-  
-  // Calculate metrics
-  const totalCalls = clientLogs.filter(log => log.event === 'connected').length;
-  const totalDuration = completedSessions.reduce((sum, s) => sum + (s.duration || 0), 0);
-  const avgDuration = totalCalls > 0 ? Math.round(totalDuration / totalCalls) : 0;
-  
-  // Calls by direction
-  const outboundCalls = completedSessions.filter(s => s.callDirection === 'outbound').length;
-  const inboundCalls = completedSessions.filter(s => s.callDirection === 'inbound').length;
-
-  // Calls by hour of day
-  const callsByHour = {};
-  for (let i = 0; i < 24; i++) callsByHour[i] = 0;
-  
-  completedSessions.forEach(session => {
-    const hour = new Date(session.startTime).getHours();
-    callsByHour[hour]++;
-  });
-
-  // Calls by day of week
-  const callsByDayOfWeek = {
-    0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 // Sunday = 0
-  };
-  
-  completedSessions.forEach(session => {
-    const day = new Date(session.startTime).getDay();
-    callsByDayOfWeek[day]++;
-  });
-
-  // Top customers by call count
-  const customerCallCounts = {};
-  completedSessions.forEach(session => {
-    const custId = session.customerData?.customerId || 'unknown';
-    const custName = session.customerData?.name || session.phoneNumber;
+  try {
+    const client = await db.clients.getByApiKey(apiKey);
     
-    if (!customerCallCounts[custId]) {
-      customerCallCounts[custId] = {
-        customerId: custId,
-        customerName: custName,
-        phoneNumber: session.phoneNumber,
-        callCount: 0,
-        totalDuration: 0
-      };
+    if (!client) {
+      return res.status(401).json({ error: 'Invalid API key' });
     }
-    
-    customerCallCounts[custId].callCount++;
-    customerCallCounts[custId].totalDuration += (session.duration || 0);
-  });
 
-  const topCustomers = Object.values(customerCallCounts)
-    .sort((a, b) => b.callCount - a.callCount)
-    .slice(0, 10);
+    // Get all analytics data from database
+    const [basicStats, callsByHour, callsByDayOfWeek, topCustomers, durationBuckets] = await Promise.all([
+      db.analytics.getBasicStats(client.client_id, startDate, endDate),
+      db.analytics.getCallsByHour(client.client_id, startDate, endDate),
+      db.analytics.getCallsByDayOfWeek(client.client_id, startDate, endDate),
+      db.analytics.getTopCustomers(client.client_id, 10, startDate, endDate),
+      db.analytics.getDurationBuckets(client.client_id, startDate, endDate)
+    ]);
 
-  // Duration distribution
-  const durationBuckets = {
-    '0-30s': 0,
-    '30s-1m': 0,
-    '1m-3m': 0,
-    '3m-5m': 0,
-    '5m+': 0
-  };
+    // Get recent activity
+    const recentActivity = await db.callSessions.getHistory(client.client_id, { 
+      startDate, 
+      endDate, 
+      limit: 20,
+      callStatus: 'completed'
+    });
 
-  completedSessions.forEach(session => {
-    const duration = session.duration || 0;
-    if (duration < 30) durationBuckets['0-30s']++;
-    else if (duration < 60) durationBuckets['30s-1m']++;
-    else if (duration < 180) durationBuckets['1m-3m']++;
-    else if (duration < 300) durationBuckets['3m-5m']++;
-    else durationBuckets['5m+']++;
-  });
-
-  res.json({
-    summary: {
-      totalCalls,
-      totalDuration,
-      avgDuration,
-      inboundCalls,
-      outboundCalls,
-      missedCalls: clientLogs.filter(log => log.event === 'incoming' && !clientLogs.some(l => l.event === 'connected' && l.data?.phoneNumber === log.data?.phoneNumber)).length
-    },
-    callsByHour,
-    callsByDayOfWeek,
-    topCustomers,
-    durationBuckets,
-    recentActivity: completedSessions.slice(-20).reverse()
-  });
+    res.json({
+      summary: {
+        totalCalls: parseInt(basicStats.total_calls) || 0,
+        totalDuration: parseInt(basicStats.total_duration) || 0,
+        avgDuration: parseInt(basicStats.avg_duration) || 0,
+        inboundCalls: parseInt(basicStats.inbound_calls) || 0,
+        outboundCalls: parseInt(basicStats.outbound_calls) || 0,
+        missedCalls: parseInt(basicStats.missed_calls) || 0
+      },
+      callsByHour,
+      callsByDayOfWeek,
+      topCustomers,
+      durationBuckets,
+      recentActivity
+    });
+  } catch (error) {
+    console.error('[API] Detailed analytics error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
 });
 
 /**
  * Get Call History for Specific Customer
  */
-app.get('/api/ribbon/customer/:customerId/calls', (req, res) => {
+app.get('/api/ribbon/customer/:customerId/calls', async (req, res) => {
   const apiKey = req.headers['x-api-key'];
   const { customerId } = req.params;
   const { limit = 50 } = req.query;
 
-  const client = clients[apiKey];
-  if (!client) {
-    return res.status(401).json({ error: 'Invalid API key' });
+  try {
+    const client = await db.clients.getByApiKey(apiKey);
+    
+    if (!client) {
+      return res.status(401).json({ error: 'Invalid API key' });
+    }
+
+    // Get customer calls from database
+    const customerCalls = await db.callSessions.getCustomerCalls(client.client_id, customerId, parseInt(limit));
+    
+    // Calculate totals
+    const totalCalls = customerCalls.length;
+    const totalDuration = customerCalls.reduce((sum, call) => sum + (parseInt(call.duration) || 0), 0);
+
+    res.json({
+      customerId,
+      calls: customerCalls,
+      totalCalls,
+      totalDuration
+    });
+  } catch (error) {
+    console.error('[API] Customer calls error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
   }
-
-  // Get all calls for this customer
-  const customerCalls = Object.values(callSessions).filter(
-    session => session.clientId === client.clientId && 
-               session.customerData?.customerId === customerId
-  );
-
-  // Get call events
-  const customerEvents = callLogs.filter(
-    log => log.clientId === client.clientId && 
-           log.data?.customerData?.customerId === customerId
-  );
-
-  res.json({
-    customerId,
-    calls: customerCalls.slice(-parseInt(limit)).reverse(),
-    events: customerEvents.slice(-parseInt(limit) * 3).reverse(),
-    totalCalls: customerCalls.length,
-    totalDuration: customerCalls.reduce((sum, call) => sum + (call.duration || 0), 0)
-  });
 });
 
 /**
  * Export Call Logs (CSV)
  */
-app.get('/api/ribbon/export/calls', (req, res) => {
+app.get('/api/ribbon/export/calls', async (req, res) => {
   const apiKey = req.headers['x-api-key'];
   const { startDate, endDate, format = 'json' } = req.query;
 
-  const client = clients[apiKey];
-  if (!client) {
-    return res.status(401).json({ error: 'Invalid API key' });
-  }
+  try {
+    const client = await db.clients.getByApiKey(apiKey);
+    
+    if (!client) {
+      return res.status(401).json({ error: 'Invalid API key' });
+    }
 
-  // Filter sessions
-  let sessions = Object.values(callSessions).filter(s => s.clientId === client.clientId && s.status === 'completed');
+    // Get sessions from database
+    const filters = { startDate, endDate, callStatus: 'completed' };
+    const sessions = await db.callSessions.getHistory(client.client_id, filters);
 
-  if (startDate) {
-    sessions = sessions.filter(s => new Date(s.startTime) >= new Date(startDate));
-  }
-  if (endDate) {
-    sessions = sessions.filter(s => new Date(s.startTime) <= new Date(endDate));
-  }
+    if (format === 'csv') {
+      // Generate CSV
+      const csv = [
+        'Session ID,Customer Name,Phone Number,Direction,Start Time,End Time,Duration (s),Customer ID',
+        ...sessions.map(s => [
+          s.session_id,
+          s.customer_name || '',
+          s.phone_number,
+          s.call_direction,
+          s.initiated_at,
+          s.ended_at || '',
+          s.duration || 0,
+          s.customer_id || ''
+        ].join(','))
+      ].join('\n');
 
-  if (format === 'csv') {
-    // Generate CSV
-    const csv = [
-      'Session ID,Customer Name,Phone Number,Direction,Start Time,End Time,Duration (s),Customer ID',
-      ...sessions.map(s => [
-        s.sessionId,
-        s.customerData?.name || '',
-        s.phoneNumber,
-        s.callDirection,
-        s.startTime,
-        s.endTime || '',
-        s.duration || 0,
-        s.customerData?.customerId || ''
-      ].join(','))
-    ].join('\n');
-
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename="call-logs-${client.clientId}-${Date.now()}.csv"`);
-    res.send(csv);
-  } else {
-    // JSON format
-    res.json({
-      client: {
-        clientId: client.clientId,
-        name: client.name
-      },
-      exportDate: new Date().toISOString(),
-      dateRange: { startDate, endDate },
-      calls: sessions
-    });
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="call-logs-${client.client_id}-${Date.now()}.csv"`);
+      res.send(csv);
+    } else {
+      // JSON format
+      res.json({
+        client: {
+          clientId: client.client_id,
+          name: client.client_name
+        },
+        exportDate: new Date().toISOString(),
+        dateRange: { startDate, endDate },
+        calls: sessions
+      });
+    }
+  } catch (error) {
+    console.error('[API] Export error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
   }
 });
 
 /**
  * List Clients (Admin only - add auth in production)
  */
-app.get('/api/admin/clients', (req, res) => {
+app.get('/api/admin/clients', async (req, res) => {
   // Add admin authentication here
   
-  const clientList = Object.entries(clients).map(([apiKey, client]) => ({
-    clientId: client.clientId,
-    name: client.name,
-    plan: client.plan,
-    callsThisMonth: client.callsThisMonth,
-    limit: client.monthlyCallLimit,
-    apiKey: apiKey.substring(0, 10) + '...' // Masked
-  }));
+  try {
+    const allClients = await db.clients.getAll();
+    
+    const clientList = allClients.map(client => ({
+      clientId: client.client_id,
+      name: client.client_name,
+      plan: client.plan_type,
+      callsThisMonth: client.calls_this_month,
+      limit: client.monthly_call_limit,
+      apiKey: client.api_key.substring(0, 10) + '...' // Masked
+    }));
 
-  res.json(clientList);
+    res.json(clientList);
+  } catch (error) {
+    console.error('[API] List clients error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
 });
 
 /**
  * Admin Dashboard - All Clients Analytics
  */
-app.get('/api/admin/analytics/all', (req, res) => {
+app.get('/api/admin/analytics/all', async (req, res) => {
   // Add admin authentication here
   
-  const allStats = Object.entries(clients).map(([apiKey, client]) => {
-    const clientLogs = callLogs.filter(log => log.clientId === client.clientId);
-    const clientSessions = Object.values(callSessions).filter(s => s.clientId === client.clientId && s.status === 'completed');
+  try {
+    const allClients = await db.clients.getAll();
     
-    return {
-      clientId: client.clientId,
-      clientName: client.name,
-      plan: client.plan,
-      totalCalls: clientLogs.filter(log => log.event === 'connected').length,
-      totalDuration: clientSessions.reduce((sum, s) => sum + (s.duration || 0), 0),
-      callsThisMonth: client.callsThisMonth,
-      limit: client.monthlyCallLimit,
-      utilizationPercent: Math.round((client.callsThisMonth / client.monthlyCallLimit) * 100)
-    };
-  });
+    const allStats = await Promise.all(allClients.map(async (client) => {
+      const stats = await db.analytics.getBasicStats(client.client_id, null, null);
+      
+      return {
+        clientId: client.client_id,
+        clientName: client.client_name,
+        plan: client.plan_type,
+        totalCalls: parseInt(stats.total_calls) || 0,
+        totalDuration: parseInt(stats.total_duration) || 0,
+        callsThisMonth: client.calls_this_month,
+        limit: client.monthly_call_limit,
+        utilizationPercent: Math.round((client.calls_this_month / client.monthly_call_limit) * 100)
+      };
+    }));
 
-  res.json({
-    clients: allStats,
-    totalClients: allStats.length,
-    totalCallsAllClients: allStats.reduce((sum, c) => sum + c.totalCalls, 0)
-  });
+    res.json({
+      clients: allStats,
+      totalClients: allStats.length,
+      totalCallsAllClients: allStats.reduce((sum, c) => sum + c.totalCalls, 0)
+    });
+  } catch (error) {
+    console.error('[API] Admin analytics error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
 });
 
 // ============================================
