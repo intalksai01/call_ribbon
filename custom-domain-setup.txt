@@ -1,0 +1,62 @@
+Custom Domain Configuration
+============================
+
+Date: Sun Oct 12 11:12:17 EDT 2025
+Domain: callribbon.intalksai.com
+CloudFront Distribution: E23RHJVEDGE3B2
+CloudFront Domain: d2t5fsybshqnye.cloudfront.net
+
+Current Status: Deploying (wait 15-20 minutes)
+
+Step 1: Wait for CloudFront Deployment
+---------------------------------------
+Check status:
+aws cloudfront get-distribution --id E23RHJVEDGE3B2 | jq '.Distribution.Status'
+
+When Status = "Deployed", proceed to Step 2.
+
+Step 2: Update Hostinger DNS
+-----------------------------
+Go to Hostinger DNS settings and UPDATE your CNAME record:
+
+OLD (Not working):
+Type: CNAME
+Name: callribbon
+Value: intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com
+
+NEW (Will work):
+Type: CNAME
+Name: callribbon
+Value: d2t5fsybshqnye.cloudfront.net
+TTL: 3600
+
+Step 3: Test
+------------
+After DNS update (wait 5-30 minutes):
+
+Test HTTP:
+curl -I http://callribbon.intalksai.com
+
+Test via CloudFront directly:
+curl -I http://d2t5fsybshqnye.cloudfront.net
+
+Step 4: Enable HTTPS (Optional)
+--------------------------------
+To enable HTTPS for callribbon.intalksai.com:
+
+1. Request SSL certificate in us-east-1:
+   aws acm request-certificate \
+     --domain-name callribbon.intalksai.com \
+     --validation-method DNS \
+     --region us-east-1
+
+2. Add validation CNAME to Hostinger DNS
+
+3. Wait for certificate validation
+
+4. Update CloudFront distribution with certificate
+
+5. Access via: https://callribbon.intalksai.com
+
+Invalidate Cache (if needed):
+aws cloudfront create-invalidation --distribution-id E23RHJVEDGE3B2 --paths "/*"

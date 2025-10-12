@@ -1,0 +1,52 @@
+SSL Certificate Setup for callhub.intalksai.com
+================================================
+
+Date: Sun Oct 12 12:11:32 EDT 2025
+Domain: callhub.intalksai.com
+Certificate ARN: arn:aws:acm:us-east-1:844605843483:certificate/fa9fae7d-7fa0-4f6e-b06a-4d4e878047cd
+CloudFront Distribution: E23RHJVEDGE3B2
+
+STEP 1: Add DNS Validation Record in Hostinger
+-----------------------------------------------
+Go to Hostinger → DNS Settings for intalksai.com
+
+Add NEW CNAME record:
+Type: CNAME
+Name: _2fd57b26579e6e2e4cf547d9b0249c43.callhub
+Value: _cf32309fcbdbd876a393d89d4362351a.xlfgrmvvlj.acm-validations.aws.
+TTL: 3600
+
+STEP 2: Wait for Validation (5-30 minutes)
+------------------------------------------
+Check status:
+aws acm describe-certificate --certificate-arn arn:aws:acm:us-east-1:844605843483:certificate/fa9fae7d-7fa0-4f6e-b06a-4d4e878047cd --region us-east-1 | jq '.Certificate.Status'
+
+When Status changes from "PENDING_VALIDATION" to "ISSUED", proceed to Step 3.
+
+STEP 3: Update CloudFront Distribution
+---------------------------------------
+Run this script again with the --update flag:
+./setup-ssl-callhub.sh --update
+
+Or manually update CloudFront to use the certificate.
+
+STEP 4: Test Your Domain
+-------------------------
+After CloudFront update (takes 15-20 minutes):
+curl -I https://callhub.intalksai.com
+
+Should return: HTTP/2 200
+
+Current DNS Configuration:
+--------------------------
+CNAME for callhub:
+Type: CNAME
+Name: callhub
+Value: d2t5fsybshqnye.cloudfront.net
+TTL: 3600
+
+DNS Validation Record (ADD THIS):
+Type: CNAME  
+Name: _2fd57b26579e6e2e4cf547d9b0249c43.callhub
+Value: _cf32309fcbdbd876a393d89d4362351a.xlfgrmvvlj.acm-validations.aws.
+TTL: 3600
