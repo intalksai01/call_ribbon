@@ -156,3 +156,4 @@ echo "📝 Next Steps:"
 echo "- Update your DNS/domain to point to the new URLs"
 echo "- Update any client integrations with the new API URL"
 echo "- Consider setting up CloudFront for better performance"
+

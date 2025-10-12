@@ -183,3 +183,4 @@ If you need to make any additional branding changes, the key files are:
 - `api/server.js` - API server (internal only)
 
 **Remember**: Rebuild the widget after any changes to see them in production!
+

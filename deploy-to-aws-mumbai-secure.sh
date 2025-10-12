@@ -209,3 +209,4 @@ echo "🔒 Security Features:"
 echo "- Private S3 bucket (no public access)"
 echo "- CloudFront provides HTTPS and global CDN"
 echo "- Secure API deployment on Elastic Beanstalk"
+

@@ -126,3 +126,4 @@ echo "⚠️ Note: Some resources like IAM roles and Security Groups were not de
 echo "   as they might be used by other resources. Please review manually if needed."
 echo ""
 echo "✅ Your AWS East region resources have been cleaned up!"
+
