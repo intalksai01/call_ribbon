@@ -1016,11 +1016,6 @@ ExotelCallRibbon.init({
 2. **Widget Script URL** - Include in your CRM
 3. **Basic JavaScript** - Initialize and configure
 
-### ✅ **What You DON'T Need:**
-1. ❌ Exotel account credentials
-2. ❌ Exotel token management
-3. ❌ Exotel user IDs
-4. ❌ Complex telephony infrastructure
 
 ### 🔐 **Security Model:**
 ```
@@ -1029,7 +1024,6 @@ ExotelCallRibbon.init({
 │  ────────────────────────────────────────────────────────│
 │  • You have: Client API Key                               │
 │  • You send: API requests with your key                   │
-│  • You never see: Exotel credentials                      │
 └───────────────────────────────────────────────────────────┘
                               │
                               ▼

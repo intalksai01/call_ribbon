@@ -1,0 +1,36 @@
+IntalksAI Call Ribbon API - Mumbai Deployment
+==============================================
+
+Deployment Date: Sun Oct 12 11:00:10 EDT 2025
+Region: Mumbai (ap-south-1)
+Application Name: intalksai-call-ribbon-api
+Environment Name: production-mumbai
+API URL: http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com
+
+Endpoints:
+- POST http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/api/ribbon/init
+- POST http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/api/ribbon/log-call
+- GET  http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/api/ribbon/config
+- GET  http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/api/ribbon/analytics
+- GET  http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/health
+
+Environment Variables:
+- NODE_ENV=production
+- CORS_ORIGINS=*
+
+Available API Keys:
+1. demo-api-key-789 (Demo/Testing - All domains)
+2. collections-crm-api-key-123 (Enterprise)
+3. marketing-leads-api-key-456 (Professional)
+
+Management Commands:
+- View logs: eb logs production-mumbai --region ap-south-1
+- Check status: eb status production-mumbai --region ap-south-1
+- SSH access: eb ssh production-mumbai --region ap-south-1
+- Update app: eb deploy production-mumbai --region ap-south-1
+- Terminate: eb terminate production-mumbai --region ap-south-1
+
+Next Steps:
+1. Update Mumbai frontend to use: http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com
+2. Test all API endpoints
+3. Update documentation with new API URL

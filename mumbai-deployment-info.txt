@@ -1,0 +1,33 @@
+IntalksAI Call Ribbon - Mumbai Deployment
+=========================================
+
+Deployment Date: Sun Oct 12 10:52:44 EDT 2025
+Region: Mumbai (ap-south-1)
+Bucket Name: intalksai-call-ribbon-widget-mumbai-1760280743
+Website URL: http://intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com
+
+API Configuration:
+- API Key: demo-api-key-789
+- Backend URL: http://production.eba-tpbtmere.us-east-1.elasticbeanstalk.com
+
+Test Customers:
+1. John Doe: +919876543210
+2. Jane Smith: +918765432109
+3. Bob Johnson: +917654321098
+4. Alice Williams: +919988776655
+5. Charlie Brown: +918877665544
+6. Diana Prince: +917766554433
+
+Features:
+- Call controls (dial, mute, hold, DTMF)
+- Drag and drop positioning
+- Mobile responsive
+- Event logging
+- Demo mode active
+
+To update deployment:
+cd widget && npm run build && cd ..
+aws s3 sync widget/build/ s3://intalksai-call-ribbon-widget-mumbai-1760280743/ --region ap-south-1 --delete
+
+To delete deployment:
+aws s3 rb s3://intalksai-call-ribbon-widget-mumbai-1760280743 --region ap-south-1 --force
