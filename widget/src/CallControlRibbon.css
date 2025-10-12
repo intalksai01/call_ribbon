@@ -73,7 +73,7 @@
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  width: 380px;
+  width: 480px;
   max-width: calc(100vw - 20px);
   background: white;
   border-radius: 10px;
@@ -156,8 +156,8 @@
 }
 
 .title-text {
-  color: #1f2937;
-  font-weight: 700;
+  color: #374151;
+  font-weight: 600;
 }
 
 .drag-handle {

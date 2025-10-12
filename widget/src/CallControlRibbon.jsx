@@ -481,7 +481,7 @@ const CallControlRibbon = ({
           <div className="ribbon-title">
             <span className={`status-dot ${isDeviceRegistered ? 'online' : 'offline'}`}></span>
             <span className="title-text">
-              {isCallActive ? 'Active Call' : 'Call Control'}
+              {isCallActive ? 'IntalksAI Callhub - Active Call' : 'IntalksAI Callhub'}
             </span>
               <span className="drag-handle" title="Drag to move">⋮⋮</span>
           </div>
