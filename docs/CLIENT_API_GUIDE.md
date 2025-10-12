@@ -23,7 +23,7 @@ API Key Format: yourcompany-api-key-2024
 When your page loads, initialize the call ribbon widget:
 
 ```javascript
-ExotelCallRibbon.init({
+IntalksAICallRibbon.init({
     apiKey: 'your-api-key-here',
     apiUrl: 'https://api.callribbon.intalksai.com',
     position: 'bottom',
@@ -42,7 +42,7 @@ ExotelCallRibbon.init({
 **This is critical for analytics!** Before initiating a call, pass the customer context:
 
 ```javascript
-ExotelCallRibbon.setCustomer({
+IntalksAICallRibbon.setCustomer({
     // Required Fields
     phoneNumber: '+919876543210',
     name: 'Rajesh Kumar',
@@ -89,7 +89,7 @@ ExotelCallRibbon.setCustomer({
 The widget handles the call automatically once customer context is set. You can also programmatically trigger it:
 
 ```javascript
-ExotelCallRibbon.makeCall();
+IntalksAICallRibbon.makeCall();
 ```
 
 ---
@@ -129,7 +129,7 @@ ExotelCallRibbon.makeCall();
 
 ```javascript
 // When user clicks on a loan account
-ExotelCallRibbon.setCustomer({
+IntalksAICallRibbon.setCustomer({
     phoneNumber: '+919876543210',
     name: 'Rajesh Kumar',
     customerId: 'LOAN001',
@@ -170,7 +170,7 @@ ExotelCallRibbon.setCustomer({
 
 ```javascript
 // When contacting a lead
-ExotelCallRibbon.setCustomer({
+IntalksAICallRibbon.setCustomer({
     phoneNumber: '+918765432109',
     name: 'Priya Sharma',
     customerId: 'LEAD-2024-0451',
@@ -210,7 +210,7 @@ ExotelCallRibbon.setCustomer({
 
 ```javascript
 // When handling a support ticket
-ExotelCallRibbon.setCustomer({
+IntalksAICallRibbon.setCustomer({
     phoneNumber: '+917654321098',
     name: 'Venkatesh Iyer',
     customerId: 'CUST-7829',
@@ -444,7 +444,7 @@ uuid,Rajesh Kumar,+919876543210,outbound,2024-10-12 10:30:00,2024-10-12 10:34:45
 
 ❌ **Don't do this:**
 ```javascript
-ExotelCallRibbon.setCustomer({
+IntalksAICallRibbon.setCustomer({
     phoneNumber: '+919876543210',
     name: 'Rajesh Kumar',
     customerId: 'LOAN001'
@@ -454,7 +454,7 @@ ExotelCallRibbon.setCustomer({
 
 ✅ **Do this:**
 ```javascript
-ExotelCallRibbon.setCustomer({
+IntalksAICallRibbon.setCustomer({
     phoneNumber: '+919876543210',
     name: 'Rajesh Kumar',
     customerId: 'LOAN001',
@@ -644,7 +644,7 @@ Monitor API health: `GET /health`
     <script src="https://cdn.callribbon.intalksai.com/v1/ribbon.js"></script>
     <script>
         // Initialize once on page load
-        ExotelCallRibbon.init({
+        IntalksAICallRibbon.init({
             apiKey: 'your-api-key-here',
             apiUrl: 'https://api.callribbon.intalksai.com',
             position: 'bottom',
@@ -658,7 +658,7 @@ Monitor API health: `GET /health`
             const customer = getCustomerFromCRM(loanId);
             
             // Set context before calling
-            ExotelCallRibbon.setCustomer({
+            IntalksAICallRibbon.setCustomer({
                 phoneNumber: customer.phone,
                 name: customer.name,
                 customerId: customer.loanId,
@@ -682,7 +682,7 @@ Monitor API health: `GET /health`
             });
             
             // Make the call
-            ExotelCallRibbon.makeCall();
+            IntalksAICallRibbon.makeCall();
         }
 
         // Handle call events

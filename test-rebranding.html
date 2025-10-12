@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntalksAI Call Ribbon - Rebranding Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            padding: 12px 24px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .primary {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 IntalksAI Call Ribbon - Rebranding Test</h1>
+        <p>Testing the widget rebranding from ExotelCallRibbon to IntalksAICallRibbon</p>
+
+        <div id="test-results"></div>
+
+        <h3>Manual Tests:</h3>
+        <button class="primary" onclick="testInit()">Test Initialize</button>
+        <button class="primary" onclick="testSetCustomer()">Test Set Customer</button>
+        <button class="primary" onclick="testBackwardCompatibility()">Test Backward Compatibility</button>
+    </div>
+
+    <!-- Load the widget -->
+    <script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.6f356dde.js"></script>
+
+    <script>
+        const results = document.getElementById('test-results');
+
+        function addResult(message, success = true) {
+            const div = document.createElement('div');
+            div.className = 'test-result ' + (success ? 'success' : 'error');
+            div.textContent = (success ? '✅ ' : '❌ ') + message;
+            results.appendChild(div);
+        }
+
+        // Run automatic tests
+        setTimeout(() => {
+            // Test 1: Check if IntalksAICallRibbon exists
+            if (typeof window.IntalksAICallRibbon !== 'undefined') {
+                addResult('IntalksAICallRibbon is defined globally', true);
+            } else {
+                addResult('IntalksAICallRibbon is NOT defined', false);
+            }
+
+            // Test 2: Check backward compatibility
+            if (typeof window.ExotelCallRibbon !== 'undefined') {
+                addResult('Backward compatibility: ExotelCallRibbon still works', true);
+            } else {
+                addResult('Backward compatibility: ExotelCallRibbon NOT found', false);
+            }
+
+            // Test 3: Check if they point to same object
+            if (window.IntalksAICallRibbon === window.ExotelCallRibbon) {
+                addResult('Both names point to the same object (correct!)', true);
+            } else {
+                addResult('Names point to different objects (error!)', false);
+            }
+
+            // Test 4: Check all methods exist
+            const methods = ['init', 'setCustomer', 'setPosition', 'setVisible', 'setMinimized', 'makeCall', 'destroy'];
+            let allMethodsExist = true;
+            
+            methods.forEach(method => {
+                if (typeof window.IntalksAICallRibbon[method] !== 'function') {
+                    allMethodsExist = false;
+                    addResult(`Method ${method} is missing`, false);
+                }
+            });
+
+            if (allMethodsExist) {
+                addResult('All 7 methods are available', true);
+            }
+
+            // Test 5: Check version
+            if (window.IntalksAICallRibbon.version) {
+                addResult(`Version: ${window.IntalksAICallRibbon.version}`, true);
+            }
+
+        }, 1000);
+
+        function testInit() {
+            try {
+                window.IntalksAICallRibbon.init({
+                    apiKey: 'demo-api-key-789',
+                    apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
+                    position: 'bottom',
+                    onReady: () => addResult('Widget initialized successfully!', true),
+                    onCallEvent: (event, data) => console.log('Event:', event, data)
+                });
+                addResult('init() method called successfully', true);
+            } catch (error) {
+                addResult('init() failed: ' + error.message, false);
+            }
+        }
+
+        function testSetCustomer() {
+            try {
+                window.IntalksAICallRibbon.setCustomer({
+                    phoneNumber: '+919876543210',
+                    name: 'Test Customer',
+                    customerId: 'TEST001'
+                });
+                addResult('setCustomer() method worked', true);
+            } catch (error) {
+                addResult('setCustomer() failed: ' + error.message, false);
+            }
+        }
+
+        function testBackwardCompatibility() {
+            try {
+                // Try using old name
+                window.ExotelCallRibbon.setCustomer({
+                    phoneNumber: '+918765432109',
+                    name: 'Backward Compat Test',
+                    customerId: 'BC001'
+                });
+                addResult('Backward compatibility works! Old name (ExotelCallRibbon) still functions', true);
+            } catch (error) {
+                addResult('Backward compatibility failed: ' + error.message, false);
+            }
+        }
+    </script>
+</body>
+</html>
+

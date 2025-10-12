@@ -3,7 +3,7 @@
 ## 🚀 Initialization
 
 ```javascript
-ExotelCallRibbon.init({
+IntalksAICallRibbon.init({
     apiKey: 'your-api-key',
     apiUrl: 'https://api.callribbon.intalksai.com',
     position: 'bottom',
@@ -17,7 +17,7 @@ ExotelCallRibbon.init({
 ## 📞 Make a Call (Required Fields)
 
 ```javascript
-ExotelCallRibbon.setCustomer({
+IntalksAICallRibbon.setCustomer({
     // ✅ REQUIRED
     phoneNumber: '+919876543210',
     name: 'Customer Name',
@@ -145,7 +145,6 @@ Use consistently for best analytics!
 
 ## 🔑 API Keys
 
-Get your key from: https://dashboard.callribbon.intalksai.com
 
 Test with: `demo-api-key-789` (100 calls/month limit)
 

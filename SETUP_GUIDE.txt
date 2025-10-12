@@ -118,7 +118,7 @@ CLIENT INTEGRATION (3 Lines of Code)
 
 3. Initialize:
    <script>
-     ExotelCallRibbon.init({
+     IntalksAICallRibbon.init({
        apiKey: 'client-abc-123',  // You provide this
        position: 'bottom'
      });
@@ -131,7 +131,7 @@ OPTIONAL: Set Customer Data
 ----------------------------
 When they select a customer:
 
-ExotelCallRibbon.setCustomer({
+IntalksAICallRibbon.setCustomer({
   phoneNumber: '+919876543210',
   name: 'John Doe',
   customerId: '12345'

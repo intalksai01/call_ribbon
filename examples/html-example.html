@@ -139,7 +139,7 @@
 &lt;script src="https://cdn.yourcompany.com/ribbon/v1/ribbon.js"&gt;&lt;/script&gt;
 &lt;script&gt;
   // Initialize with Collections CRM API key
-  ExotelCallRibbon.init({
+  IntalksAICallRibbon.init({
     apiKey: 'collections-crm-api-key-123',
     position: 'bottom',
     onCallEvent: function(event, data) {
@@ -153,7 +153,7 @@
 
   // When agent selects a customer
   function selectCustomer(customer) {
-    ExotelCallRibbon.setCustomer({
+    IntalksAICallRibbon.setCustomer({
       phoneNumber: customer.phone,
       name: customer.name,
       customerId: customer.id
@@ -182,7 +182,7 @@
 
     <h3>Implementation:</h3>
     <div class="code">// Marketing Leads CRM Integration
-ExotelCallRibbon.init({
+IntalksAICallRibbon.init({
   apiKey: 'marketing-leads-api-key-456',
   position: 'floating',
   onCallEvent: function(event, data) {
@@ -219,7 +219,7 @@ ExotelCallRibbon.init({
 
     <h3>Implementation:</h3>
     <div class="code">// Support CRM Integration
-ExotelCallRibbon.init({
+IntalksAICallRibbon.init({
   apiKey: 'demo-api-key-789',
   position: 'bottom',
   onCallEvent: function(event, data) {
@@ -234,9 +234,9 @@ ExotelCallRibbon.init({
 });
 
 // Additional controls
-ExotelCallRibbon.setPosition('top'); // Change position
-ExotelCallRibbon.setMinimized(true); // Minimize
-ExotelCallRibbon.setVisible(false);  // Hide completely</div>
+IntalksAICallRibbon.setPosition('top'); // Change position
+IntalksAICallRibbon.setMinimized(true); // Minimize
+IntalksAICallRibbon.setVisible(false);  // Hide completely</div>
   </div>
 
   <!-- Include the actual ribbon script -->
@@ -278,7 +278,7 @@ ExotelCallRibbon.setVisible(false);  // Hide completely</div>
       currentCRM = 'collections';
       updateStatus('collections', 'Initializing...');
 
-      // In production, this would call ExotelCallRibbon.init()
+      // In production, this would call IntalksAICallRibbon.init()
       // For demo, we'll simulate it
       setTimeout(() => {
         updateStatus('collections', '✅ Ribbon initialized - Ready to make calls');
@@ -324,12 +324,12 @@ ExotelCallRibbon.setVisible(false);  // Hide completely</div>
       const positions = ['top', 'bottom', 'floating'];
       const current = Math.floor(Math.random() * positions.length);
       logEvent('support', `Position changed to: ${positions[current]}`);
-      alert(`In production: ExotelCallRibbon.setPosition('${positions[current]}')`);
+      alert(`In production: IntalksAICallRibbon.setPosition('${positions[current]}')`);
     }
 
     function toggleMinimize() {
       logEvent('support', 'Ribbon minimized/expanded');
-      alert('In production: ExotelCallRibbon.setMinimized(true/false)');
+      alert('In production: IntalksAICallRibbon.setMinimized(true/false)');
     }
 
     // ============================================
@@ -367,7 +367,7 @@ ExotelCallRibbon.setVisible(false);  // Hide completely</div>
       });
       event.target.closest('.customer-card').classList.add('selected');
 
-      // In production: ExotelCallRibbon.setCustomer(customer)
+      // In production: IntalksAICallRibbon.setCustomer(customer)
       logEvent(crm, `Customer selected: ${customer.name} (${customer.phone})`);
       
       // Simulate call events
@@ -408,7 +408,7 @@ ExotelCallRibbon.setVisible(false);  // Hide completely</div>
     function productionExample() {
       // This is what your clients would actually use:
       
-      ExotelCallRibbon.init({
+      IntalksAICallRibbon.init({
         apiKey: 'your-api-key-from-us',
         position: 'bottom', // or 'top', 'floating'
         onCallEvent: function(event, data) {
@@ -435,7 +435,7 @@ ExotelCallRibbon.setVisible(false);  // Hide completely</div>
       });
 
       // When customer is selected
-      ExotelCallRibbon.setCustomer({
+      IntalksAICallRibbon.setCustomer({
         phoneNumber: '+919876543210',
         name: 'Customer Name',
         customerId: 'your-crm-id'
@@ -447,22 +447,22 @@ ExotelCallRibbon.setVisible(false);  // Hide completely</div>
     <h2>📚 Quick Reference</h2>
     <h3>Available Methods:</h3>
     <div class="code">// Initialize
-ExotelCallRibbon.init({ apiKey, position, onCallEvent, onReady });
+IntalksAICallRibbon.init({ apiKey, position, onCallEvent, onReady });
 
 // Set customer
-ExotelCallRibbon.setCustomer({ phoneNumber, name, customerId });
+IntalksAICallRibbon.setCustomer({ phoneNumber, name, customerId });
 
 // Control position
-ExotelCallRibbon.setPosition('top' | 'bottom' | 'floating');
+IntalksAICallRibbon.setPosition('top' | 'bottom' | 'floating');
 
 // Show/Hide
-ExotelCallRibbon.setVisible(true | false);
+IntalksAICallRibbon.setVisible(true | false);
 
 // Minimize/Expand
-ExotelCallRibbon.setMinimized(true | false);
+IntalksAICallRibbon.setMinimized(true | false);
 
 // Destroy
-ExotelCallRibbon.destroy();</div>
+IntalksAICallRibbon.destroy();</div>
   </div>
 
 </body>

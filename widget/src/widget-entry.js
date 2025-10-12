@@ -5,7 +5,7 @@
  * Usage:
  *   <script src="https://cdn.yourcompany.com/ribbon/v1/ribbon.js"></script>
  *   <script>
- *     ExotelCallRibbon.init({ apiKey: 'xxx', position: 'bottom' });
+ *     IntalksAICallRibbon.init({ apiKey: 'xxx', position: 'bottom' });
  *   </script>
  */
 
@@ -13,7 +13,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import CallControlRibbon from './CallControlRibbon';
 
-class ExotelCallRibbonWidget {
+class IntalksAICallRibbonWidget {
   constructor() {
     this.root = null;
     this.container = null;
@@ -33,7 +33,7 @@ class ExotelCallRibbonWidget {
    */
   async init(config) {
     if (!config.apiKey) {
-      console.error('[ExotelCallRibbon] API key is required');
+      console.error('[IntalksAICallRibbon] API key is required');
       return;
     }
 
@@ -58,7 +58,7 @@ class ExotelCallRibbonWidget {
       }
 
       this.credentials = await response.json();
-      console.log('[ExotelCallRibbon] Credentials loaded successfully');
+      console.log('[IntalksAICallRibbon] Credentials loaded successfully');
 
       // Create or get container
       this.container = document.getElementById('intalksai-call-ribbon-container');
@@ -77,8 +77,8 @@ class ExotelCallRibbonWidget {
       }
 
     } catch (error) {
-      console.error('[ExotelCallRibbon] Initialization failed:', error);
-      console.log('[ExotelCallRibbon] Falling back to demo mode');
+      console.error('[IntalksAICallRibbon] Initialization failed:', error);
+      console.log('[IntalksAICallRibbon] Falling back to demo mode');
       
       // Fallback to demo mode
       this.credentials = {
@@ -157,7 +157,7 @@ class ExotelCallRibbonWidget {
   makeCall(phoneNumber) {
     // This will be handled by the ribbon component
     // We can add a ref or event system if needed
-    console.log('[ExotelCallRibbon] Making call to:', phoneNumber);
+    console.log('[IntalksAICallRibbon] Making call to:', phoneNumber);
   }
 
   /**
@@ -204,7 +204,7 @@ class ExotelCallRibbonWidget {
         minimized: this.config.minimized || false,
         onCallEvent: wrappedCallEvent,
         onReady: () => {
-          console.log('[ExotelCallRibbon] Ribbon is ready');
+          console.log('[IntalksAICallRibbon] Ribbon is ready');
         }
       })
     );
@@ -230,7 +230,7 @@ class ExotelCallRibbonWidget {
         })
       });
     } catch (error) {
-      console.error('[ExotelCallRibbon] Failed to log call event:', error);
+      console.error('[IntalksAICallRibbon] Failed to log call event:', error);
     }
   }
 
@@ -284,10 +284,10 @@ class ExotelCallRibbonWidget {
 }
 
 // Create global instance
-const ribbonInstance = new ExotelCallRibbonWidget();
+const ribbonInstance = new IntalksAICallRibbonWidget();
 
 // Expose global API - Support both old and new names for compatibility
-window.ExotelCallRibbon = {
+window.IntalksAICallRibbon = {
   /**
    * Initialize the ribbon
    */
@@ -329,19 +329,19 @@ window.ExotelCallRibbon = {
   version: '1.0.0'
 };
 
-// Also expose as IntalksAICallRibbon for new integrations
-window.IntalksAICallRibbon = window.ExotelCallRibbon;
+// Backward compatibility - alias to old name
+window.ExotelCallRibbon = window.IntalksAICallRibbon;
 
 // AMD/UMD support
 if (typeof define === 'function' && define.amd) {
   define([], function() {
-    return window.ExotelCallRibbon;
+    return window.IntalksAICallRibbon;
   });
 }
 
 // CommonJS support
 if (typeof module === 'object' && module.exports) {
-  module.exports = window.ExotelCallRibbon;
+  module.exports = window.IntalksAICallRibbon;
 }
 
-  console.log('[IntalksAI Call Ribbon] Widget loaded v' + window.ExotelCallRibbon.version);
+  console.log('[IntalksAI Call Ribbon] Widget loaded v' + window.IntalksAICallRibbon.version);

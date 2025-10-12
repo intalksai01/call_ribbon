@@ -284,17 +284,17 @@
 
     <!-- Load the widget -->
     <link rel="stylesheet" href="/static/css/main.f54db67a.css">
-    <script src="/static/js/main.3b847e89.js"></script>
+    <script src="/static/js/main.6f356dde.js"></script>
     <script>
         
         // Initialize the ribbon
         setTimeout(() => {
             try {
-                if (typeof ExotelCallRibbon === 'undefined') {
-                    throw new Error('ExotelCallRibbon not loaded. Widget files may not be accessible.');
+                if (typeof IntalksAICallRibbon === 'undefined') {
+                    throw new Error('IntalksAICallRibbon not loaded. Widget files may not be accessible.');
                 }
                 
-                ExotelCallRibbon.init({
+                IntalksAICallRibbon.init({
                     apiKey: 'demo-api-key-789',
                     apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
                     position: 'bottom',
@@ -333,11 +333,11 @@
             
             // Update ribbon with customer data
             try {
-                if (typeof ExotelCallRibbon === 'undefined') {
-                    throw new Error('ExotelCallRibbon not loaded');
+                if (typeof IntalksAICallRibbon === 'undefined') {
+                    throw new Error('IntalksAICallRibbon not loaded');
                 }
                 
-                ExotelCallRibbon.setCustomer({
+                IntalksAICallRibbon.setCustomer({
                     phoneNumber: phone,
                     name: name,
                     customerId: customerId

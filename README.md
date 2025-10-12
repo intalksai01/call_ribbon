@@ -27,13 +27,15 @@ IntalksAI Call Ribbon is a plug-and-play widget that adds professional calling c
 ### 1. Include the Widget
 
 ```html
-<script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.3b847e89.js"></script>
+<script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.6f356dde.js"></script>
 ```
+
+> **Note:** The widget is also available as `ExotelCallRibbon` for backward compatibility.
 
 ### 2. Initialize
 
 ```javascript
-ExotelCallRibbon.init({
+IntalksAICallRibbon.init({
   apiKey: 'your-api-key',
   apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
   position: 'bottom'
@@ -43,7 +45,7 @@ ExotelCallRibbon.init({
 ### 3. Set Customer & Call
 
 ```javascript
-ExotelCallRibbon.setCustomer({
+IntalksAICallRibbon.setCustomer({
   phoneNumber: '+919876543210',
   name: 'Rajesh Kumar',
   customerId: 'LOAN001',

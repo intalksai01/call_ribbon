@@ -20,13 +20,15 @@ This guide provides everything you need to integrate the IntalksAI Call Ribbon i
 Add this script tag to your CRM application:
 
 ```html
-<script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.3b847e89.js"></script>
+<script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.6f356dde.js"></script>
 ```
+
+> **Note:** For backward compatibility, the widget is also available as `ExotelCallRibbon`.
 
 ### **Step 2: Initialize the Ribbon**
 
 ```javascript
-ExotelCallRibbon.init({
+IntalksAICallRibbon.init({
   apiKey: 'your-api-key-here',
   apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
   position: 'bottom',
@@ -40,7 +42,7 @@ ExotelCallRibbon.init({
 **⚠️ IMPORTANT:** Send rich context data for meaningful analytics!
 
 ```javascript
-ExotelCallRibbon.setCustomer({
+IntalksAICallRibbon.setCustomer({
   // Required fields
   phoneNumber: '+919876543210',
   name: 'Rajesh Kumar',
@@ -119,7 +121,7 @@ ExotelCallRibbon.setCustomer({
 
   <script>
     // Initialize once on page load
-    ExotelCallRibbon.init({
+    IntalksAICallRibbon.init({
       apiKey: 'your-collections-api-key',
       apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
       position: 'bottom',
@@ -133,7 +135,7 @@ ExotelCallRibbon.setCustomer({
       const customer = getCustomerFromDB(loanId);
       
       // Set customer with rich context
-      ExotelCallRibbon.setCustomer({
+      IntalksAICallRibbon.setCustomer({
         // Required
         phoneNumber: customer.phone,
         name: customer.name,
@@ -235,7 +237,7 @@ ExotelCallRibbon.setCustomer({
 
 ```javascript
 // Initialize for sales CRM
-ExotelCallRibbon.init({
+IntalksAICallRibbon.init({
   apiKey: 'your-sales-api-key',
   apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
   position: 'floating',
@@ -246,7 +248,7 @@ ExotelCallRibbon.init({
 function callLead(leadId) {
   const lead = getLeadFromCRM(leadId);
   
-  ExotelCallRibbon.setCustomer({
+  IntalksAICallRibbon.setCustomer({
     phoneNumber: lead.phone,
     name: lead.name,
     customerId: lead.leadId,
@@ -296,7 +298,7 @@ function handleSalesCallEvent(event, data) {
 
 ```javascript
 // Initialize for support
-ExotelCallRibbon.init({
+IntalksAICallRibbon.init({
   apiKey: 'your-support-api-key',
   apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
   position: 'bottom',
@@ -307,7 +309,7 @@ ExotelCallRibbon.init({
 function callCustomerForSupport(ticketId) {
   const ticket = getTicketFromCRM(ticketId);
   
-  ExotelCallRibbon.setCustomer({
+  IntalksAICallRibbon.setCustomer({
     phoneNumber: ticket.customerPhone,
     name: ticket.customerName,
     customerId: ticket.customerId,
@@ -360,7 +362,7 @@ function handleSupportCallEvent(event, data) {
 ### Initialization
 
 ```javascript
-ExotelCallRibbon.init({
+IntalksAICallRibbon.init({
   // Required
   apiKey: 'your-api-key',
   apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
@@ -375,7 +377,7 @@ ExotelCallRibbon.init({
 ### Set Customer Context
 
 ```javascript
-ExotelCallRibbon.setCustomer({
+IntalksAICallRibbon.setCustomer({
   // ✅ Required
   phoneNumber: '+919876543210',
   name: 'Customer Name',
@@ -402,23 +404,23 @@ ExotelCallRibbon.setCustomer({
 
 ```javascript
 // Show/Hide Widget
-ExotelCallRibbon.setVisible(true);
-ExotelCallRibbon.setVisible(false);
+IntalksAICallRibbon.setVisible(true);
+IntalksAICallRibbon.setVisible(false);
 
 // Minimize/Expand
-ExotelCallRibbon.setMinimized(true);
-ExotelCallRibbon.setMinimized(false);
+IntalksAICallRibbon.setMinimized(true);
+IntalksAICallRibbon.setMinimized(false);
 
 // Change Position
-ExotelCallRibbon.setPosition('top');
-ExotelCallRibbon.setPosition('bottom');
-ExotelCallRibbon.setPosition('floating');
+IntalksAICallRibbon.setPosition('top');
+IntalksAICallRibbon.setPosition('bottom');
+IntalksAICallRibbon.setPosition('floating');
 
 // Make Call Programmatically
-ExotelCallRibbon.makeCall('+919876543210');
+IntalksAICallRibbon.makeCall('+919876543210');
 
 // Cleanup
-ExotelCallRibbon.destroy();
+IntalksAICallRibbon.destroy();
 ```
 
 ---
@@ -695,7 +697,7 @@ Use consistent call types:
 
 ```javascript
 // Check if widget loaded
-if (typeof ExotelCallRibbon === 'undefined') {
+if (typeof IntalksAICallRibbon === 'undefined') {
   console.error('Widget not loaded! Check script URL');
 }
 ```

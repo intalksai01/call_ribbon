@@ -51,7 +51,7 @@ Your clients need 3 lines of code:
 <link rel="stylesheet" href="https://YOUR-URL/static/css/main.*.css">
 <script src="https://YOUR-URL/static/js/main.*.js"></script>
 <script>
-  ExotelCallRibbon.init({ apiKey: 'their-key', position: 'bottom' });
+  IntalksAICallRibbon.init({ apiKey: 'their-key', position: 'bottom' });
 </script>
 
 ================================================================================
