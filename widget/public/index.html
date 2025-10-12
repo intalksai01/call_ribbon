@@ -166,17 +166,44 @@
             <strong>Status:</strong> <span id="status-text">Loading widget...</span>
         </div>
         
-        <h2>👥 Real Customers from Database</h2>
-        <p>
-            <span id="customer-source">Loading South India Finvest customers from PostgreSQL...</span>
-            <span style="color: #10b981; font-weight: 600; margin-left: 10px;" id="customer-count"></span>
-        </p>
+        <h2>👥 Test Customers</h2>
+        <p>Click on any customer to load their details into the ribbon:</p>
         
-        <div class="customer-list" id="customer-list">
-            <!-- Customers will be loaded dynamically from PostgreSQL -->
-            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #9ca3af;">
-                <div style="font-size: 48px; margin-bottom: 20px;">⏳</div>
-                <div>Loading customer data from PostgreSQL...</div>
+        <div class="customer-list">
+            <div class="customer-card" onclick="selectCustomer('John Doe', '+919876543210', 'customer-001')">
+                <div class="customer-name">👨‍💼 John Doe</div>
+                <div class="customer-phone">📞 +91 987 654 3210</div>
+                <div class="customer-info">💰 Outstanding: $5,000 | 15 days overdue</div>
+            </div>
+            
+            <div class="customer-card" onclick="selectCustomer('Jane Smith', '+918765432109', 'customer-002')">
+                <div class="customer-name">👩‍💼 Jane Smith</div>
+                <div class="customer-phone">📞 +91 876 543 2109</div>
+                <div class="customer-info">🎯 Lead: Premium Plan | Hot prospect</div>
+            </div>
+            
+            <div class="customer-card" onclick="selectCustomer('Bob Johnson', '+917654321098', 'customer-003')">
+                <div class="customer-name">👨‍💻 Bob Johnson</div>
+                <div class="customer-phone">📞 +91 765 432 1098</div>
+                <div class="customer-info">🎫 Ticket #1234: Login Issue | High priority</div>
+            </div>
+            
+            <div class="customer-card" onclick="selectCustomer('Alice Williams', '+919988776655', 'customer-004')">
+                <div class="customer-name">👩‍🔬 Alice Williams</div>
+                <div class="customer-phone">📞 +91 998 877 6655</div>
+                <div class="customer-info">💼 Enterprise Client | Annual contract</div>
+            </div>
+            
+            <div class="customer-card" onclick="selectCustomer('Charlie Brown', '+918877665544', 'customer-005')">
+                <div class="customer-name">👨‍🎨 Charlie Brown</div>
+                <div class="customer-phone">📞 +91 887 766 5544</div>
+                <div class="customer-info">🔥 Hot Lead | Requested demo yesterday</div>
+            </div>
+            
+            <div class="customer-card" onclick="selectCustomer('Diana Prince', '+917766554433', 'customer-006')">
+                <div class="customer-name">👩‍⚖️ Diana Prince</div>
+                <div class="customer-phone">📞 +91 776 655 4433</div>
+                <div class="customer-info">⭐ VIP Customer | Lifetime value: $50K</div>
             </div>
         </div>
         
@@ -187,136 +214,6 @@
     <link rel="stylesheet" href="/static/css/main.2d3832e2.css">
     <script src="/static/js/main.3b847e89.js"></script>
     <script>
-        const API_URL = 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com';
-        const API_KEY = 'southindia-finvest-api-key-2024';
-        
-        // Load customers from PostgreSQL
-        async function loadCustomers() {
-            try {
-                const response = await fetch(`${API_URL}/api/admin/clients`, {
-                    headers: {
-                        'x-api-key': API_KEY
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch customers');
-                }
-                
-                const clients = await response.json();
-                
-                // Now get customers for South India Finvest
-                // Since we don't have a direct "get all customers" endpoint, we'll use the call logs to extract unique customers
-                const logsResponse = await fetch(`${API_URL}/api/ribbon/call-logs?pageSize=100`, {
-                    headers: {
-                        'x-api-key': API_KEY
-                    }
-                });
-                
-                if (!logsResponse.ok) {
-                    throw new Error('Failed to fetch call logs');
-                }
-                
-                const logsData = await logsResponse.json();
-                
-                // Extract unique customers from call logs
-                const customersMap = new Map();
-                logsData.logs.forEach(log => {
-                    if (log.customer_id && log.customer_name) {
-                        customersMap.set(log.customer_id, {
-                            id: log.customer_id,
-                            external_id: log.external_call_id || 'N/A',
-                            name: log.customer_name,
-                            phone: log.phone_number,
-                            email: log.customer_email || 'N/A',
-                            call_type: log.call_type,
-                            metadata: log.metadata || {}
-                        });
-                    }
-                });
-                
-                const customers = Array.from(customersMap.values());
-                displayCustomers(customers);
-                
-            } catch (error) {
-                console.error('Error loading customers:', error);
-                document.getElementById('customer-list').innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #ef4444;">
-                        <div style="font-size: 48px; margin-bottom: 20px;">❌</div>
-                        <div>Failed to load customers: ${error.message}</div>
-                    </div>
-                `;
-                document.getElementById('customer-source').textContent = 'Error loading customers from database';
-                document.getElementById('customer-source').style.color = '#ef4444';
-            }
-        }
-        
-        function displayCustomers(customers) {
-            const customerList = document.getElementById('customer-list');
-            
-            if (customers.length === 0) {
-                customerList.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #9ca3af;">
-                        <div style="font-size: 48px; margin-bottom: 20px;">📭</div>
-                        <div>No customers found in database</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            document.getElementById('customer-source').innerHTML = `
-                ✅ Loaded from PostgreSQL Database (South India Finvest)
-            `;
-            document.getElementById('customer-source').style.color = '#10b981';
-            document.getElementById('customer-count').textContent = `${customers.length} customers`;
-            
-            customerList.innerHTML = customers.map(customer => {
-                const icon = getCustomerIcon(customer.call_type);
-                const info = getCustomerInfo(customer);
-                
-                return `
-                    <div class="customer-card" onclick="selectCustomer('${customer.name}', '${customer.phone}', '${customer.external_id || customer.id}', ${JSON.stringify(customer).replace(/"/g, '&quot;')})">
-                        <div class="customer-name">${icon} ${customer.name}</div>
-                        <div class="customer-phone">📞 ${customer.phone}</div>
-                        <div class="customer-info">${info}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-        
-        function getCustomerIcon(callType) {
-            const icons = {
-                'collections': '💰',
-                'sales': '🎯',
-                'customer_service': '🎧',
-                'support': '🛠️'
-            };
-            return icons[callType] || '👤';
-        }
-        
-        function getCustomerInfo(customer) {
-            if (customer.call_type === 'collections' && customer.metadata) {
-                const daysOverdue = customer.metadata.daysOverdue || customer.metadata.campaign?.includes('overdue');
-                if (daysOverdue) {
-                    return `💰 Collections | ${customer.metadata.campaign || 'Follow-up required'}`;
-                }
-            }
-            
-            if (customer.call_type === 'sales' && customer.metadata) {
-                return `🎯 Sales Lead | ${customer.metadata.product || customer.metadata.campaign || 'Hot prospect'}`;
-            }
-            
-            if (customer.call_type === 'customer_service') {
-                return `🎧 Service | ${customer.metadata.campaign || 'Customer support'}`;
-            }
-            
-            return `${customer.call_type || 'Contact'} | ${customer.email}`;
-        }
-        
-        // Load customers on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            loadCustomers();
-        });
         
         // Initialize the ribbon
         setTimeout(() => {
@@ -326,8 +223,8 @@
                 }
                 
                 ExotelCallRibbon.init({
-                    apiKey: API_KEY,
-                    apiUrl: API_URL,
+                    apiKey: 'demo-api-key-789',
+                    apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
                     position: 'bottom',
                     onCallEvent: function(event, data) {
                         console.log('Call Event:', event, data);
@@ -355,7 +252,7 @@
         }, 1500);
         
         // Select customer function
-        function selectCustomer(name, phone, customerId, customerData) {
+        function selectCustomer(name, phone, customerId) {
             // Highlight selected card
             document.querySelectorAll('.customer-card').forEach(card => {
                 card.classList.remove('selected');
@@ -371,8 +268,7 @@
                 ExotelCallRibbon.setCustomer({
                     phoneNumber: phone,
                     name: name,
-                    customerId: customerId,
-                    ...customerData
+                    customerId: customerId
                 });
                 
                 // Update status
