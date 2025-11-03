@@ -78,16 +78,8 @@ class IntalksAICallRibbonWidget {
 
     } catch (error) {
       console.error('[IntalksAICallRibbon] Initialization failed:', error);
-      console.log('[IntalksAICallRibbon] Falling back to demo mode');
       
-      // Fallback to demo mode
-      this.credentials = {
-        exotelToken: null,
-        userId: null,
-        demo: true
-      };
-      
-      // Create or get container
+      // Create or get container for error display
       this.container = document.getElementById('intalksai-call-ribbon-container');
       if (!this.container) {
         this.container = document.createElement('div');
@@ -95,10 +87,10 @@ class IntalksAICallRibbonWidget {
         document.body.appendChild(this.container);
       }
 
-      // Render the ribbon in demo mode
+      // Render error state
       this.render();
 
-      // Call ready callback
+      // Call ready callback if provided
       if (config.onReady) {
         config.onReady();
       }
@@ -168,13 +160,11 @@ class IntalksAICallRibbonWidget {
       return;
     }
     
-    // If no credentials, show demo mode
-    if (!this.credentials) {
-      this.credentials = {
-        exotelToken: null,
-        userId: null,
-        demo: true
-      };
+    // Validate credentials
+    if (!this.credentials || !this.credentials.exotelToken || !this.credentials.userId) {
+      console.error('[IntalksAICallRibbon] Missing credentials');
+      this.container.innerHTML = '<div style="padding: 10px; background: #fee; border: 1px solid #fcc; border-radius: 4px; color: #c00;">Exotel credentials required</div>';
+      return;
     }
 
     // Wrap callback to add logging

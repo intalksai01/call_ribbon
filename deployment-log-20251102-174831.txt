@@ -1,0 +1,69 @@
+🚀 Deploying API Backend to AWS Mumbai (ap-south-1)
+====================================================
+
+✅ Checking AWS credentials...
+✅ AWS credentials validated
+
+✅ EB application already initialized
+
+⚠️  Environment 'production-mumbai' already exists
+   Updating existing environment...
+
+Alert: The platform version that your environment is using isn't recommended. There's a recommended version in the same platform branch.
+
+Creating application version archive "app-251102_174838538233".
+Uploading: [--------------------------------------------------] 0% Uploading: [#########################-------------------------] 50% Uploading: [##################################################] 100% Done...
+2025-11-02 22:49:03    INFO    Environment update is starting.
+2025-11-02 22:49:09    INFO    Deploying new version to instance(s).
+2025-11-02 22:49:19    INFO    Instance deployment completed successfully.
+2025-11-02 22:49:26    INFO    New application version was deployed to running EC2 instances.
+2025-11-02 22:49:26    INFO    Environment update completed successfully.
+Alert: An update to the EB CLI is available. Run "pip install --upgrade awsebcli" to get the latest version.
+
+✅ Deployment initiated
+
+⏳ Waiting for environment to be ready...
+Environment details for: production-mumbai
+  Application name: intalksai-call-ribbon-api
+  Region: ap-south-1
+  Deployed Version: app-251102_174838538233
+  Environment ID: e-nfbudp3mxx
+  Platform: arn:aws:elasticbeanstalk:ap-south-1::platform/Node.js 22 running on 64bit Amazon Linux 2023/6.6.5
+  Tier: WebServer-Standard-1.0
+  CNAME: production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com
+  Updated: 2025-11-02 22:49:26.445000+00:00
+  Status: Ready
+  Health: Green
+Alert: The platform version that your environment is using isn't recommended. There's a recommended version in the same platform branch.
+
+Alert: An update to the EB CLI is available. Run "pip install --upgrade awsebcli" to get the latest version.
+
+====================================================
+✅ API Backend Deployment Complete!
+====================================================
+
+📍 Region: Mumbai (ap-south-1)
+🏢 Application: intalksai-call-ribbon-api
+🌍 Environment: production-mumbai
+🔗 API URL: http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com
+
+🧪 Testing endpoints:
+   Health: http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/health
+   Init: http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/api/ribbon/init
+
+🏥 Testing health endpoint...
+⚠️  Health endpoint not responding yet (may take a few more minutes)
+
+💾 Deployment info saved to: mumbai-api-deployment-info.txt
+
+🎯 Next Steps:
+   1. Test the API health endpoint
+   2. Update Mumbai frontend to use Mumbai API
+   3. Test the demo with local API
+
+📝 To update the frontend:
+   Edit widget/public/index.html
+   Change apiUrl to: http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com
+   Rebuild and redeploy widget
+
+✨ Done!

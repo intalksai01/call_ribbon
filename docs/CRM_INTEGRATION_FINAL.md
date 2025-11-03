@@ -20,10 +20,11 @@ This guide provides everything you need to integrate the IntalksAI Call Ribbon i
 Add this script tag to your CRM application:
 
 ```html
-<script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.6f356dde.js"></script>
+<script src="http://intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com/static/js/main.fd7646b7.js"></script>
 ```
 
-> **Note:** For backward compatibility, the widget is also available as `ExotelCallRibbon`.
+> **Note:** For backward compatibility, the widget is also available as `ExotelCallRibbon`.  
+> **⚠️ HTTPS Mixed Content:** Since the API is HTTP, use the S3 HTTP URL (not CloudFront HTTPS) to avoid mixed content errors.
 
 ### **Step 2: Initialize the Ribbon**
 
@@ -117,7 +118,7 @@ IntalksAICallRibbon.setCustomer({
   </div>
 
   <!-- Widget Script -->
-  <script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.3b847e89.js"></script>
+  <script src="http://intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com/static/js/main.fd7646b7.js"></script>
 
   <script>
     // Initialize once on page load

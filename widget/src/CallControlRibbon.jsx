@@ -22,8 +22,7 @@ const CallControlRibbon = ({
 }) => {
   const [phoneNumber, setPhoneNumber] = useState(customerData?.phoneNumber || "");
   const [isCallActive, setCallActive] = useState(false);
-  // Always start in demo mode for now - will be overridden by real initialization if credentials exist
-  const [isDeviceRegistered, setIsDeviceRegistered] = useState(true);
+  const [isDeviceRegistered, setIsDeviceRegistered] = useState(false);
   
   // Debug: Log state changes
   useEffect(() => {
@@ -36,9 +35,13 @@ const CallControlRibbon = ({
 
   // Debug: Log config on mount
   useEffect(() => {
-    console.log("[CallControlRibbon] Config object:", config);
-    console.log("[CallControlRibbon] accessToken:", config?.accessToken);
+    console.log("====================================================================");
+    console.log("[CallControlRibbon] INITIALIZATION DEBUG INFO");
+    console.log("====================================================================");
+    console.log("[CallControlRibbon] Config object:", JSON.stringify(config, null, 2));
+    console.log("[CallControlRibbon] accessToken:", config?.accessToken?.substring(0, 20) + "...");
     console.log("[CallControlRibbon] userId:", config?.userId);
+    console.log("====================================================================");
   }, [config]);
   const [isMuted, setIsMuted] = useState(false);
   const [isOnHold, setIsOnHold] = useState(false);
@@ -113,12 +116,17 @@ const CallControlRibbon = ({
   };
 
   const RegisterationEvent = (event) => {
+    console.log("====================================================================");
+    console.log("[CallControlRibbon] REGISTRATION EVENT:", event);
+    console.log("====================================================================");
     if (event === "registered") {
+      console.log("✅ Device registered successfully!");
       setIsDeviceRegistered(true);
       onReady?.();
       showNotificationMessage("Device online", "success");
     }
     if (event === "unregistered") {
+      console.log("❌ Device unregistered!");
       setIsDeviceRegistered(false);
       showNotificationMessage("Device offline", "error");
     }
@@ -130,29 +138,33 @@ const CallControlRibbon = ({
         return;
       }
       
-      // Demo mode: If no real credentials, simulate connected state
+      // Validate credentials
       if (!config?.accessToken || !config?.userId) {
-        console.log("[CallControlRibbon] Demo mode: Simulating connected state");
-        console.log("[CallControlRibbon] Setting isDeviceRegistered to true");
-        setIsDeviceRegistered(true);
-        showNotificationMessage("Demo mode: Call controls available", "success");
+        console.error("[CallControlRibbon] Missing Exotel credentials");
+        showNotificationMessage("Missing Exotel credentials", "error");
         return;
       }
       
       try {
-        console.log("[CallControlRibbon] Initializing Exotel SDK");
+        console.log("====================================================================");
+        console.log("[CallControlRibbon] INITIALIZING EXOTEL SDK");
+        console.log("====================================================================");
+        console.log("[CallControlRibbon] Creating ExotelCRMWebSDK instance...");
         const crmWebSDK = new ExotelCRMWebSDK(config.accessToken, config.userId, true);
+        console.log("[CallControlRibbon] Calling Initialize...");
         const crmWebPhone = await crmWebSDK.Initialize(
           HandleCallEvents,
           RegisterationEvent
         );
         webPhone.current = crmWebPhone;
-        console.log("[CallControlRibbon] Exotel SDK initialized");
+        console.log("✅ [CallControlRibbon] Exotel SDK initialized successfully!");
+        console.log("====================================================================");
       } catch (error) {
-        console.error("[CallControlRibbon] Initialization failed:", error);
-        showNotificationMessage("Failed to initialize call service - Demo mode active", "warning");
-        // Fallback to demo mode
-        setIsDeviceRegistered(true);
+        console.error("====================================================================");
+        console.error("[CallControlRibbon] INITIALIZATION FAILED:", error);
+        console.error("Error details:", JSON.stringify(error, null, 2));
+        console.error("====================================================================");
+        showNotificationMessage("Failed to initialize call service", "error");
       }
     };
 
@@ -264,11 +276,19 @@ const CallControlRibbon = ({
   };
 
   const dialCallback = (status, response) => {
-    console.log("[CallControlRibbon] dialCallback", { status, response });
+    console.log("====================================================================");
+    console.log("[CallControlRibbon] dialCallback called");
+    console.log("====================================================================");
+    console.log("[CallControlRibbon] Status:", status);
+    console.log("[CallControlRibbon] Response:", JSON.stringify(response, null, 2));
     if (status === "success") {
       const callSid = response.Data?.CallSid;
       console.log("[CallControlRibbon] CallSid:", callSid);
+      console.log("✅ Call initiated successfully!");
+    } else {
+      console.log("❌ Call failed in callback");
     }
+    console.log("====================================================================");
   };
 
   const dial = () => {
@@ -284,23 +304,42 @@ const CallControlRibbon = ({
     setIsIncomingCall(false);
     showNotificationMessage(`Dialling ${phoneNumber}`, "info");
     
-    // Demo mode: Simulate call connection (always use demo mode for now)
-    console.log("[CallControlRibbon] Demo mode: Simulating call connection");
-      setTimeout(() => {
-        console.log("[CallControlRibbon] Setting isCallActive to true");
-        setIsDialing(false);
-        setCallActive(true);
-        setCallDuration(0);
-        showNotificationMessage("Demo call connected!", "success");
-        
-        // Start call timer
-        callTimer.current = setInterval(() => {
-          setCallDuration(prev => prev + 1);
-        }, 1000);
-      }, 2000);
-    return;
+    if (!webPhone.current) {
+      console.error("[CallControlRibbon] Cannot make call - webPhone not initialized");
+      showNotificationMessage("Call service not available", "error");
+      setIsDialing(false);
+      return;
+    }
     
-    webPhone.current.MakeCall(phoneNumber, dialCallback);
+    try {
+      console.log("====================================================================");
+      console.log("[CallControlRibbon] CALL DEBUG INFO");
+      console.log("====================================================================");
+      console.log("[CallControlRibbon] Phone number:", phoneNumber);
+      console.log("[CallControlRibbon] Config:", JSON.stringify(config, null, 2));
+      console.log("[CallControlRibbon] webPhone available:", !!webPhone.current);
+      if (webPhone.current) {
+        console.log("[CallControlRibbon] webPhone methods:", Object.getOwnPropertyNames(webPhone.current));
+        console.log("[CallControlRibbon] MakeCall exists:", typeof webPhone.current.MakeCall);
+      }
+      console.log("====================================================================");
+      
+      // MakeCall with callback as per SDK documentation
+      webPhone.current.MakeCall(phoneNumber, dialCallback);
+      
+    } catch (error) {
+      console.error("====================================================================");
+      console.error("[CallControlRibbon] MakeCall ERROR DETAILS:");
+      console.error("Error:", error);
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+      if (error.Error) {
+        console.error("Error body:", JSON.parse(error.Error));
+      }
+      console.error("====================================================================");
+      showNotificationMessage(`Call failed: ${error.message || 'Unknown error'}`, "error");
+      setIsDialing(false);
+    }
     
     // Reset dialing state after a delay
     setTimeout(() => {
@@ -319,16 +358,12 @@ const CallControlRibbon = ({
   const hangup = () => {
     if (webPhone.current) {
       webPhone.current.HangupCall();
-    } else {
-      // Demo mode: Clear call timer
-      if (callTimer.current) {
-        clearInterval(callTimer.current);
-        callTimer.current = null;
-      }
-      showNotificationMessage("Demo call ended", "info");
+    }
+    if (callTimer.current) {
+      clearInterval(callTimer.current);
+      callTimer.current = null;
     }
     setCallActive(false);
-    setIsCallActive(false);
     setCallDuration(0);
   };
 
@@ -437,9 +472,9 @@ const CallControlRibbon = ({
     };
   }, [isDragging, dragOffset]);
 
-  // Allow demo mode to render even without credentials
+  // Log credential status
   if (!config?.accessToken || !config?.userId) {
-    console.log("[CallControlRibbon] Running in demo mode - no credentials provided");
+    console.warn("[CallControlRibbon] Missing Exotel credentials");
   }
 
   return (

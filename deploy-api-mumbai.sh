@@ -8,7 +8,7 @@ set -e
 REGION="ap-south-1"
 APP_NAME="intalksai-call-ribbon-api"
 ENV_NAME="production-mumbai"
-PLATFORM="Node.js 18 running on 64bit Amazon Linux 2023"
+PLATFORM="node.js-20"
 
 echo "🚀 Deploying API Backend to AWS Mumbai (ap-south-1)"
 echo "===================================================="
