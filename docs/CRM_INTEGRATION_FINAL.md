@@ -11,15 +11,28 @@ This guide provides everything you need to integrate the IntalksAI Call Ribbon i
 - ✅ No Exotel credential management needed
 - ✅ Works with any CRM platform
 
+### 🌐 Production URLs
+
+**Widget:**
+- ✅ Custom Domain: `https://callhub.intalksai.com`
+- ✅ CloudFront: `https://d2t5fsybshqnye.cloudfront.net`
+- 🔄 S3 (HTTP): `http://intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com`
+
+**API:**
+- ✅ Custom Domain: `https://api.intalksai.com`
+- 🔄 Beanstalk (HTTP): `http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com`
+
+> **Recommended:** Use HTTPS custom domain URLs for production.
+
 ---
 
 ## 🚀 Quick Start (3 Steps)
 
 ### **Step 1: Include the Widget**
 
-**Option A: From S3 (HTTP)**
+**Option A: Custom Domain (Recommended)**
 ```html
-<script src="http://intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com/static/js/main.fd7646b7.js"></script>
+<script src="https://callhub.intalksai.com/static/js/main.fd7646b7.js"></script>
 ```
 
 **Option B: From CloudFront (HTTPS)**
@@ -27,7 +40,13 @@ This guide provides everything you need to integrate the IntalksAI Call Ribbon i
 <script src="https://d2t5fsybshqnye.cloudfront.net/static/js/main.fd7646b7.js"></script>
 ```
 
-> **Note:** For backward compatibility, the widget is also available as `ExotelCallRibbon`.
+**Option C: From S3 (HTTP)**
+```html
+<script src="http://intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com/static/js/main.fd7646b7.js"></script>
+```
+
+> **Note:** For backward compatibility, the widget is also available as `ExotelCallRibbon`.  
+> **Recommended:** Use Option A (custom domain) or Option B (CloudFront HTTPS) for production.
 
 ### **Step 2: Initialize the Ribbon**
 
@@ -121,13 +140,13 @@ IntalksAICallRibbon.setCustomer({
   </div>
 
   <!-- Widget Script -->
-  <script src="http://intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com/static/js/main.fd7646b7.js"></script>
+  <script src="https://callhub.intalksai.com/static/js/main.fd7646b7.js"></script>
 
   <script>
     // Initialize once on page load
     IntalksAICallRibbon.init({
       apiKey: 'your-collections-api-key',
-      apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
+      apiUrl: 'https://api.intalksai.com',
       position: 'bottom',
       onCallEvent: handleCallEvent,
       onReady: () => console.log('✅ Call ribbon ready!')
@@ -243,7 +262,7 @@ IntalksAICallRibbon.setCustomer({
 // Initialize for sales CRM
 IntalksAICallRibbon.init({
   apiKey: 'your-sales-api-key',
-  apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
+  apiUrl: 'https://api.intalksai.com',
   position: 'floating',
   onCallEvent: handleSalesCallEvent
 });
@@ -304,7 +323,7 @@ function handleSalesCallEvent(event, data) {
 // Initialize for support
 IntalksAICallRibbon.init({
   apiKey: 'your-support-api-key',
-  apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
+  apiUrl: 'https://api.intalksai.com',
   position: 'bottom',
   onCallEvent: handleSupportCallEvent
 });
@@ -369,7 +388,7 @@ function handleSupportCallEvent(event, data) {
 IntalksAICallRibbon.init({
   // Required
   apiKey: 'your-api-key',
-  apiUrl: 'http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com',
+  apiUrl: 'https://api.intalksai.com',
   
   // Optional
   position: 'bottom',  // 'top', 'bottom', 'floating'
@@ -496,8 +515,8 @@ function handleCallEvent(event, data) {
 ### Get Call History
 
 ```bash
-GET /api/ribbon/call-logs?page=1&pageSize=50
-Headers: x-api-key: your-api-key
+curl https://api.intalksai.com/api/ribbon/call-logs?page=1&pageSize=50 \
+  -H "x-api-key: your-api-key"
 
 # Optional query params:
 - startDate: ISO date
@@ -541,15 +560,15 @@ Headers: x-api-key: your-api-key
 ### Get Customer Call History
 
 ```bash
-GET /api/ribbon/customer/{customerId}/calls?limit=50
-Headers: x-api-key: your-api-key
+curl https://api.intalksai.com/api/ribbon/customer/{customerId}/calls?limit=50 \
+  -H "x-api-key: your-api-key"
 ```
 
 ### Get Analytics
 
 ```bash
-GET /api/ribbon/analytics
-Headers: x-api-key: your-api-key
+curl https://api.intalksai.com/api/ribbon/analytics \
+  -H "x-api-key: your-api-key"
 ```
 
 **Response:**
@@ -575,8 +594,8 @@ Headers: x-api-key: your-api-key
 ### Get Detailed Analytics
 
 ```bash
-GET /api/ribbon/analytics/detailed
-Headers: x-api-key: your-api-key
+curl https://api.intalksai.com/api/ribbon/analytics/detailed \
+  -H "x-api-key: your-api-key"
 ```
 
 **Response includes:**
@@ -588,8 +607,8 @@ Headers: x-api-key: your-api-key
 ### Export Data
 
 ```bash
-GET /api/ribbon/export/calls?format=csv
-Headers: x-api-key: your-api-key
+curl https://api.intalksai.com/api/ribbon/export/calls?format=csv \
+  -H "x-api-key: your-api-key"
 ```
 
 Exports to CSV or JSON format.
@@ -602,7 +621,7 @@ Exports to CSV or JSON format.
 
 Contact us to get your unique API key:
 - 📧 Email: contact@intalksai.com
-- 🌐 Website: https://callribbon.intalksai.com
+- 🌐 Website: https://callhub.intalksai.com
 
 **API Key Format:** `yourcompany-api-key-2024`
 
@@ -710,7 +729,7 @@ if (typeof IntalksAICallRibbon === 'undefined') {
 
 ```javascript
 // Test API key
-fetch('http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/api/ribbon/config', {
+fetch('https://api.intalksai.com/api/ribbon/config', {
   headers: { 'x-api-key': 'your-api-key' }
 })
 .then(r => r.json())
@@ -762,8 +781,8 @@ The widget is fully responsive and works on:
 ### Contact Us
 
 - 📧 Email: contact@intalksai.com
-- 📚 Documentation: https://docs.callribbon.intalksai.com
-- 💬 Slack Community: (invite link)
+- 🌐 Website: https://callhub.intalksai.com
+- 📚 Documentation: https://callhub.intalksai.com/docs
 
 ### SLA
 
@@ -837,9 +856,6 @@ Before going live, ensure:
    - Contact Exotel support to verify your account has TURN relay enabled
    - Ask them to enable "TCP fallback" for your WebRTC SDK
    - WhatsApp: 08088919888
-
-### Issue: "Media devices not available in insecure contexts"
-**Solution:** Use HTTPS or HTTP (not mixed). Currently, use the S3 HTTP endpoint.
 
 ### Issue: "480 Temporarily Unavailable"
 **Solution:** SIP endpoint not registered or network issue. Check Exotel dashboard registration status.
