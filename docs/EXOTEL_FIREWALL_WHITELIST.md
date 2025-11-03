@@ -101,6 +101,16 @@ ping 122.15.8.18
 ### Issue: "Works on WiFi but not on corporate network"
 **Solution:** Corporate firewall needs configuration
 
+### Issue: "Calls work locally but fail on AWS/production - device registered, ringing works, but call drops when answered"
+**Solution:** This is a WebRTC media issue, not a firewall issue with your infrastructure.
+- **Local works:** Your local network allows WebRTC media
+- **Production fails:** Client's network or firewall is blocking WebRTC media
+- **Infrastructure is fine:** AWS Elastic Beanstalk and S3 are configured correctly
+- **User's network must allow:**
+  - UDP ports 10000-40000 (outbound)
+  - Media server IPs: `182.76.143.61`, `122.15.8.18` (Mumbai)
+  - Contact user's IT admin to whitelist Exotel media servers
+
 ### Issue: "Call can not be made because of TRAI NDNC regulations" (Error 403)
 **Solution:** This is NOT a firewall issue. The phone number is blocked by TRAI DND registry.
 - **Test numbers are blocked by default** in Exotel

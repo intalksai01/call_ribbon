@@ -804,6 +804,47 @@ Before going live, ensure:
 
 ---
 
+## 🔧 Troubleshooting
+
+### Issue: "Call works locally but not in production - device registered, ringing works, but call drops when answered"
+
+**Problem:** WebRTC media cannot establish due to network restrictions.
+
+**Solutions:**
+
+1. **Check Exotel Dashboard Settings:**
+   - Log in to https://dashboard.exotel.com
+   - Navigate to Settings → WebRTC → Advanced
+   - Enable **"Force TURN Relay"** for WebRTC calls
+   - Enable **"Use TCP Fallback"** if available
+
+2. **User's Network Configuration:**
+   - **Corporate/Enterprise Users:** Contact IT admin to whitelist:
+     - Outbound UDP ports 10000-40000
+     - Exotel media server IPs: `182.76.143.61`, `122.15.8.18` (Mumbai region)
+   - **Personal WiFi:** Try disabling VPN or switching networks
+   - **Firewall:** Temporarily disable firewall to test
+
+3. **Browser Configuration:**
+   - Use Chrome or Edge (Chromium-based) for best WebRTC support
+   - Check browser console for WebRTC errors
+   - Verify microphone permissions are granted
+
+4. **Exotel Support:**
+   - Contact Exotel support to verify your account has TURN relay enabled
+   - Ask them to enable "TCP fallback" for your WebRTC SDK
+   - WhatsApp: 08088919888
+
+### Issue: "Media devices not available in insecure contexts"
+**Solution:** Use HTTPS or HTTP (not mixed). Currently, use the S3 HTTP endpoint.
+
+### Issue: "480 Temporarily Unavailable"
+**Solution:** SIP endpoint not registered or network issue. Check Exotel dashboard registration status.
+
+See `docs/EXOTEL_FIREWALL_WHITELIST.md` for detailed firewall configuration.
+
+---
+
 ## 📄 License
 
 This widget is provided under commercial license.
