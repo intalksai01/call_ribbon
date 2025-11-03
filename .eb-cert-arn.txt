@@ -1,0 +1,1 @@
+arn:aws:acm:ap-south-1:844605843483:certificate/c2affef8-43bb-4671-b04a-c4f209d914aa

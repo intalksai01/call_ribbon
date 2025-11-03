@@ -63,7 +63,8 @@ eb deploy production-mumbai --region ap-south-1
 - **Region:** Mumbai (ap-south-1)
 - **Application:** `intalksai-call-ribbon-api`
 - **Environment:** `production-mumbai`
-- **URL:** `http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com`
+- **URL (HTTPS):** `https://api.intalksai.com`
+- **URL (HTTP):** `http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com`
 
 ### Existing Environment Variables
 - `NODE_ENV=production`
@@ -76,23 +77,29 @@ eb deploy production-mumbai --region ap-south-1
 
 ### 1. Health Check
 ```bash
+# HTTPS (recommended)
+curl https://api.intalksai.com/api/health
+
+# HTTP (alternative)
 curl http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/api/health
 ```
 
 ### 2. Analytics API
 ```bash
 curl -H "x-api-key: demo-api-key-999" \
-  http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/api/ribbon/analytics
+  https://api.intalksai.com/api/ribbon/analytics
 ```
 
 ### 3. Call Logs
 ```bash
 curl -H "x-api-key: demo-api-key-999" \
-  http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/api/ribbon/call-logs
+  https://api.intalksai.com/api/ribbon/call-logs
 ```
 
 ### 4. Widget Demo
-Visit: `http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com`
+Visit: 
+- **S3 (HTTP):** `http://intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com`
+- **CloudFront (HTTPS):** `https://d2t5fsybshqnye.cloudfront.net`
 
 ---
 
@@ -219,45 +226,41 @@ If deployment has issues, you can:
 
 #### Widget (CloudFront + S3)
 - **S3 Bucket:** `intalksai-call-ribbon-widget-mumbai-1760280743`
-- **CloudFront URL:** `https://d2t5fsybshqnye.cloudfront.net` ⚠️ **HTTPS - Has mixed content issue**
-- **S3 Website URL:** `http://intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com` ✅ **Use This for Testing (HTTP only)**
+- **CloudFront URL (HTTPS):** `https://d2t5fsybshqnye.cloudfront.net` ✅ **Recommended**
+- **S3 Website URL (HTTP):** `http://intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com` ✅ **Alternative**
 
 #### API (Elastic Beanstalk)
 - **Environment:** `production-mumbai`
-- **URL:** `http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com`
+- **HTTPS URL:** `https://api.intalksai.com` ✅ **Recommended**
+- **HTTP URL:** `http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com` ✅ **Alternative**
 - **Health:** ✅ Green
 - **Platform:** Node.js 22
-- **Version:** `app-251102_145942314120`
 
 ### Test the Deployment
 
-1. **Widget Demo (Use S3 HTTP URL for Testing):**
+1. **Widget Demo:**
    ```bash
+   # HTTPS Widget (Recommended)
+   open https://d2t5fsybshqnye.cloudfront.net
+   
+   # HTTP Widget (Alternative)
    open http://intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com
    ```
    
-   ⚠️ **IMPORTANT - HTTPS Mixed Content Issue:**
-- ✅ **API Health Fixed:** Elastic Beanstalk health check now working
-- ⚠️ **Widget Issue:** Widget runs on HTTPS but API is HTTP
-- Browsers block HTTP API calls from HTTPS widget pages
-- **Solution:** Enable HTTPS on Elastic Beanstalk (requires ALB + SSL certificate)
-
-**Next Steps:**
-1. Request SSL certificate for Elastic Beanstalk in AWS Console
-2. Configure Application Load Balancer with HTTPS listener
-3. Update widget API URL to use HTTPS
-
-**✅ WORKAROUND:** Use the S3 Website URL (`http://intalksai-call-ribbon-widget-mumbai-1760280743.s3-website.ap-south-1.amazonaws.com`) to avoid mixed content issues.
+   ✅ **HTTPS Mixed Content Issue: FIXED!**
+- Widget now uses HTTPS API (`https://api.intalksai.com`)
+- No more mixed content errors
+- CloudFront HTTPS widget works perfectly with HTTPS API
 
 2. **Health Check:**
    ```bash
-   curl http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/api/health
+   curl https://api.intalksai.com/api/health
    ```
 
 3. **Analytics API:**
    ```bash
    curl -H "x-api-key: demo-api-key-999" \
-     http://production-mumbai.eba-jfgji9nq.ap-south-1.elasticbeanstalk.com/api/ribbon/analytics
+     https://api.intalksai.com/api/ribbon/analytics
    ```
 
 ---
