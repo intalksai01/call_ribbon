@@ -1,5 +1,8 @@
 # 🚀 AWS Deployment Ready
 
+> 📖 **For detailed step-by-step deployment instructions, including certificate creation, HTTPS setup, and DNS configuration, see:**  
+> **[Complete Deployment Guide](docs/DEPLOYMENT_GUIDE.md)**
+
 ## Production-Ready Version
 
 All changes have been made to deploy the updated production version to AWS.
