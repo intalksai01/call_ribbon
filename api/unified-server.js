@@ -104,13 +104,15 @@ const clients = {
  * Initialize ribbon - Get Exotel credentials
  */
 app.post('/api/ribbon/init', (req, res) => {
-  const { apiKey, domain } = req.body;
+  const { apiKey, domain, agentUserId, clientName } = req.body;
 
   console.log('====================================================================');
   console.log('[Ribbon Init] Request received');
   console.log('====================================================================');
   console.log('[Ribbon Init] API Key:', apiKey);
   console.log('[Ribbon Init] Domain:', domain);
+  console.log('[Ribbon Init] Agent User ID:', agentUserId || 'Not provided');
+  console.log('[Ribbon Init] Client Name:', clientName || 'Not provided');
   console.log('[Ribbon Init] Timestamp:', new Date().toISOString());
 
   // Validate API key
@@ -172,12 +174,14 @@ app.post('/api/ribbon/init', (req, res) => {
  * Log call events
  */
 app.post('/api/ribbon/log-call', (req, res) => {
-  const { apiKey, event, data, timestamp, domain } = req.body;
+  const { apiKey, event, data, timestamp, domain, agentUserId, clientName } = req.body;
 
   console.log('====================================================================');
   console.log('[Call Event] Logging event');
   console.log('====================================================================');
   console.log('[Call Event] API Key:', apiKey);
+  console.log('[Call Event] Agent User ID:', agentUserId || 'Not provided');
+  console.log('[Call Event] Client Name:', clientName || 'Not provided');
   console.log('[Call Event] Event:', event);
   console.log('[Call Event] Timestamp:', timestamp);
   console.log('[Call Event] Data:', JSON.stringify(data, null, 2));
@@ -198,7 +202,15 @@ app.post('/api/ribbon/log-call', (req, res) => {
   }
 
   // In production, save to database
-  // await db.callLogs.insert({ clientId: client.clientId, event, data, timestamp });
+  // await db.callLogs.insert({ 
+  //   clientId: client.clientId, 
+  //   event, 
+  //   data, 
+  //   timestamp,
+  //   agentUserId: agentUserId || null,
+  //   clientName: clientName || null,
+  //   domain: domain || null
+  // });
 
   console.log('[Call Event] ✅ Event logged successfully');
   console.log('====================================================================');

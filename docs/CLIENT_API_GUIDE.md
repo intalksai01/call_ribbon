@@ -25,6 +25,8 @@ When your page loads, initialize the call ribbon widget:
 ```javascript
 IntalksAICallRibbon.init({
     apiKey: 'your-api-key-here',
+    agentUserId: 'agent-123',        // Optional: Agent's unique user ID for analytics
+    clientName: 'Your Company Name', // Optional: Client/company name for identification
     apiUrl: 'https://api.callribbon.intalksai.com',
     position: 'bottom',
     onCallEvent: function(event, data) {
@@ -36,6 +38,11 @@ IntalksAICallRibbon.init({
     }
 });
 ```
+
+> **Note:** `agentUserId` and `clientName` are optional but recommended. They enable:
+> - Agent-specific performance tracking in analytics
+> - Better call attribution and reporting
+> - Multi-tenant client identification
 
 ### 2. Set Customer Context Before Each Call
 

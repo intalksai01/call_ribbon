@@ -53,12 +53,19 @@ This guide provides everything you need to integrate the IntalksAI Call Ribbon i
 ```javascript
 IntalksAICallRibbon.init({
   apiKey: 'your-api-key-here',
+  agentUserId: 'agent-123',        // Optional: Agent's unique user ID
+  clientName: 'Your Company Name', // Optional: Client/company name
   apiUrl: 'https://api.intalksai.com',
   position: 'bottom',
   onCallEvent: handleCallEvent,
   onReady: () => console.log('Ribbon ready!')
 });
 ```
+
+> **Note:** `agentUserId` and `clientName` are optional but recommended. They help with:
+> - Better call analytics and reporting
+> - Agent-specific performance tracking
+> - Multi-tenant client identification
 
 ### **Step 3: Set Customer Context**
 
@@ -146,6 +153,8 @@ IntalksAICallRibbon.setCustomer({
     // Initialize once on page load
     IntalksAICallRibbon.init({
       apiKey: 'your-collections-api-key',
+      agentUserId: getCurrentAgent().id,    // Agent's unique ID
+      clientName: 'Collections CRM Inc.',   // Your company name
       apiUrl: 'https://api.intalksai.com',
       position: 'bottom',
       onCallEvent: handleCallEvent,
@@ -389,6 +398,10 @@ IntalksAICallRibbon.init({
   // Required
   apiKey: 'your-api-key',
   apiUrl: 'https://api.intalksai.com',
+  
+  // Optional (but recommended)
+  agentUserId: 'agent-123',        // Agent's unique user ID for analytics
+  clientName: 'Your Company Name', // Client/company name for identification
   
   // Optional
   position: 'bottom',  // 'top', 'bottom', 'floating'

@@ -26,6 +26,8 @@ class IntalksAICallRibbonWidget {
    * Initialize the ribbon widget
    * @param {Object} config - Configuration object
    * @param {string} config.apiKey - Client's API key (provided by you)
+   * @param {string} config.agentUserId - Agent's unique user ID (optional but recommended)
+   * @param {string} config.clientName - Client/company name (optional but recommended)
    * @param {string} config.position - Ribbon position: 'top', 'bottom', or 'floating'
    * @param {Function} config.onCallEvent - Callback for call events
    * @param {Function} config.onReady - Callback when ribbon is ready
@@ -38,6 +40,8 @@ class IntalksAICallRibbonWidget {
     }
 
     this.config = config;
+    this.agentUserId = config.agentUserId || null;
+    this.clientName = config.clientName || null;
 
     try {
       // Fetch Exotel credentials from your backend API
@@ -49,7 +53,9 @@ class IntalksAICallRibbonWidget {
         },
         body: JSON.stringify({
           apiKey: config.apiKey,
-          domain: window.location.hostname
+          domain: window.location.hostname,
+          agentUserId: config.agentUserId || null,
+          clientName: config.clientName || null
         })
       });
 
@@ -216,7 +222,9 @@ class IntalksAICallRibbonWidget {
           event,
           data,
           timestamp: new Date().toISOString(),
-          domain: window.location.hostname
+          domain: window.location.hostname,
+          agentUserId: this.agentUserId || null,
+          clientName: this.clientName || null
         })
       });
     } catch (error) {

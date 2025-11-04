@@ -5,6 +5,8 @@
 ```javascript
 IntalksAICallRibbon.init({
     apiKey: 'your-api-key',
+    agentUserId: 'agent-123',        // Optional: Agent's unique user ID
+    clientName: 'Your Company Name', // Optional: Client/company name
     apiUrl: 'https://api.callribbon.intalksai.com',
     position: 'bottom',
     onCallEvent: (event, data) => { /* handle events */ },
