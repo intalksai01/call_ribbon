@@ -25,7 +25,7 @@ When your page loads, initialize the call ribbon widget:
 ```javascript
 IntalksAICallRibbon.init({
     apiKey: 'your-api-key-here',
-    agentUserId: 'agent-123',        // Optional: Agent's unique user ID for analytics
+    agentUserId: 'agent-123',        // ⚠️ REQUIRED: Used as Exotel userId for SIP registration
     clientName: 'Your Company Name', // Optional: Client/company name for identification
     apiUrl: 'https://api.callribbon.intalksai.com',
     position: 'bottom',
@@ -39,10 +39,11 @@ IntalksAICallRibbon.init({
 });
 ```
 
-> **Note:** `agentUserId` and `clientName` are optional but recommended. They enable:
-> - Agent-specific performance tracking in analytics
-> - Better call attribution and reporting
-> - Multi-tenant client identification
+> **⚠️ Important:** `agentUserId` is **required** and must be unique for each agent:
+> - Used as the Exotel `userId` for SIP registration and call routing
+> - Each agent login must have a different `agentUserId`
+> - If not provided, falls back to server's default (not recommended for production)
+> - `clientName` is optional but recommended for better analytics and reporting
 
 ### 2. Set Customer Context Before Each Call
 

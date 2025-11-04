@@ -26,8 +26,8 @@ class IntalksAICallRibbonWidget {
    * Initialize the ribbon widget
    * @param {Object} config - Configuration object
    * @param {string} config.apiKey - Client's API key (provided by you)
-   * @param {string} config.agentUserId - Agent's unique user ID (optional but recommended)
-   * @param {string} config.clientName - Client/company name (optional but recommended)
+   * @param {string} config.agentUserId - Agent's unique user ID (REQUIRED - used as Exotel userId for SIP registration)
+   * @param {string} config.clientName - Client/company name (optional but recommended for analytics)
    * @param {string} config.position - Ribbon position: 'top', 'bottom', or 'floating'
    * @param {Function} config.onCallEvent - Callback for call events
    * @param {Function} config.onReady - Callback when ribbon is ready
@@ -189,11 +189,26 @@ class IntalksAICallRibbonWidget {
       this.root = ReactDOM.createRoot(this.container);
     }
 
+    // Use agentUserId from client side for Exotel userId if provided
+    // This ensures each agent has a unique Exotel user ID for SIP registration
+    // Fall back to server's userId if agentUserId is not provided (backward compatibility)
+    const exotelUserId = this.agentUserId || this.credentials.userId;
+    
+    if (!this.agentUserId) {
+      console.warn('[IntalksAICallRibbon] ⚠️ WARNING: agentUserId not provided!');
+      console.warn('[IntalksAICallRibbon] Each agent should have a unique agentUserId for proper Exotel SIP registration.');
+      console.warn('[IntalksAICallRibbon] Falling back to server default userId:', this.credentials.userId);
+      console.warn('[IntalksAICallRibbon] Please provide agentUserId in init() config for production use.');
+    }
+    
+    console.log('[IntalksAICallRibbon] Using Exotel userId:', exotelUserId);
+    console.log('[IntalksAICallRibbon] Agent User ID from client:', this.agentUserId || 'Not provided (using server default)');
+
     this.root.render(
       React.createElement(CallControlRibbon, {
         config: {
           accessToken: this.credentials.exotelToken,
-          userId: this.credentials.userId
+          userId: exotelUserId
         },
         customerData: this.customerData,
         position: this.config.position || 'bottom',

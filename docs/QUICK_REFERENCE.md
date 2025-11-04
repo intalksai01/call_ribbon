@@ -5,7 +5,7 @@
 ```javascript
 IntalksAICallRibbon.init({
     apiKey: 'your-api-key',
-    agentUserId: 'agent-123',        // Optional: Agent's unique user ID
+    agentUserId: 'agent-123',        // ⚠️ REQUIRED: Used as Exotel userId (must be unique per agent)
     clientName: 'Your Company Name', // Optional: Client/company name
     apiUrl: 'https://api.callribbon.intalksai.com',
     position: 'bottom',
@@ -13,6 +13,8 @@ IntalksAICallRibbon.init({
     onReady: () => { /* ready */ }
 });
 ```
+
+> **⚠️ Important:** `agentUserId` is used as the Exotel `userId` for SIP registration. Each agent must have a unique `agentUserId`.
 
 ---
 
